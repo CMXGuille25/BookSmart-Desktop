@@ -1,0 +1,73 @@
+.escanear-tarjeta-svg-card {
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+  background: #A47149;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  margin: 0 auto 40px auto;
+}
+.escanear-tarjeta-titulo {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #453726;
+  font-size: 32px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0.10px;
+  word-wrap: break-word;
+  margin-top: 35px;
+  margin-bottom: 40px;
+}
+
+/* Fondo general de la pantalla de escaneo */
+.escanear-tarjeta-card {
+  width: 550px;
+  height: 408px;
+  background: rgba(225, 197, 171, 0.80);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  margin: 0;
+  margin-top: 120px;
+}
+
+
+/* Botón Siguiente único para escanear tarjeta */
+.escanear-tarjeta-siguiente-btn {
+  background: #2F5232;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 32px;
+  font-size: 20px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: background 0.2s;
+  margin-bottom: 48px;
+  align-self: center;
+}
+.escanear-tarjeta-siguiente-btn:hover {
+  background: #244021;
+}
+.escanear-bg {
+  background: #FFF9EC;
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+}
+

@@ -1,0 +1,280 @@
+/* src/components/Login.css */
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600&family=Rowdies:wght@700&display=swap');
+
+/* Reset completo para evitar márgenes no deseados */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Contenedor principal que asegura el centrado */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #FFF9EC;
+  font-family: 'League Spartan', sans-serif;
+  overflow: hidden;
+}
+
+/* Contenedor secundario para mayor control */
+.login-container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Tarjeta de login - CENTRADA DEFINITIVAMENTE */
+.login-card {
+  position: relative; /* Importante para que el logo absoluto se posicione aquí */
+  width: 100%;
+  max-width: 467px;
+  background: #FFF9EC;
+  padding: 100px 30px 40px 30px; /* Aumenta el padding-top para bajar todo */
+  border-radius: 8px;
+  /*box-shadow: 0 2px 10px rgba(47, 82, 51, 0.1);*/
+  text-align: center;
+  margin: 0 auto; /* Doble garantía de centrado */
+  transform: translateX(-40px); /* Ajusta el valor según lo que necesites */
+
+}
+
+/* Títulos con Rowdies */
+.app-title {
+  color: #2F5233;
+  font-family: 'Rowdies', cursive;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Texto normal con League Spartan */
+.login-subtitle {
+  color: #453726;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 48px;
+  font-weight: 500;
+  margin-bottom: 1px;
+  white-space: nowrap;
+  width: 700px;           /* Más ancho que el formulario */
+  left: 57%;
+  position: relative;
+  transform: translateX(-50%);
+  text-align: center;
+  display: block;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 467px;
+  height: 247px;
+}
+
+.form-group {
+  text-align: left;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #4B453D;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 32px;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 467px;
+  height: 70px;
+  padding: 12px 15px;
+  border: #45372626 solid;
+  border-radius: 6px;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 20px;
+  background-color: #FFFFFF;
+  color: #222222;
+}
+
+.no-account {
+  width: 448px;
+  height: 18px;
+  margin: 15px auto 24px auto; /* Centrado y separación abajo */
+  margin-top: 1px;      /* Reduce el espacio arriba */
+  opacity: 1;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 600;
+  font-style: normal; /* SemiBold se representa con font-weight: 600 */
+  font-size: 20px;
+  line-height: 1; /* 100% */
+  letter-spacing: 0;
+  text-align: center;
+  vertical-align: middle;
+  color: #2F5233;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-account-link {
+   color: #453726;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  text-decoration: underline;
+  margin-right: 4px;
+  cursor: pointer;
+}
+.no-account-link:hover {
+  color: #2F5233;
+}
+
+/* Grupo de contraseña para manejar el ícono de visibilidad */
+.password-group {
+  position: relative;
+}
+
+/* Estilo del input de contraseña */
+.eye-icon {
+  position: absolute;
+  right: 20px;
+  top: 73%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 41px;
+  opacity: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* Botón con tipografía específica */
+.login-button {
+  width: 252px;
+  height: 55px;
+  opacity: 1;
+  /* El contenido y estilos previos se mantienen */
+  padding: 14px;
+  background-color: #453726;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-family: 'League Spartan';
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0 auto;
+  display: block;
+}
+
+.login-button:hover {
+  background-color: #1e3a24;
+  transform: translateY(-2px);
+}
+
+.login-logo{
+    display: block;
+    position: absolute;
+    width: 244px;
+    height: 244px;
+    left: calc(50% - 190px/2);
+    top: calc(50% - 244px/2 - 240px); /* Antes era -269px, ahora es -189px para bajarlo 80px más */
+    margin: 0 auto 48px auto; /* Centrado y separación inferior */
+    margin-bottom: 32px;
+}
+
+
+/* Confirmación de inicio de sesión */
+.confirm-title {
+  color: #453726;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 36px;
+  font-weight: 500;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.confirm-instruction {
+  color: #A67C52;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 32px;
+  margin-top: 0;
+  text-align: center;
+}
+
+.confirm-form {
+  height: auto;
+  gap: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.confirm-code-input {
+  width: 100%;
+  max-width: 467px;
+  height: 70px;
+  font-size: 32px;
+  font-family: 'League Spartan', sans-serif;
+  border-radius: 8px;
+  border: 3px solid #D9D9D9;
+  margin: 0 auto 32px auto;
+  display: block;
+  padding: 12px 15px;
+  box-sizing: border-box;
+}
+
+.confirm-button {
+  width: 342px;
+  height: 58px;
+  opacity: 1;
+  background-color: #395B35;
+  color: #fff;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  border-radius: 32px;
+  border: none;
+  margin: 0 auto;
+  display: block;
+  transition: 
+    background-color 200ms cubic-bezier(0.2, 0, 0, 1),
+    transform 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.confirm-button:active {
+  background-color: #2F5233;
+  transform: scale(0.98);
+}
+
+.confirm-code-input {
+  width: 306px;
+  height: 88px;
+  opacity: 1;
+  border-radius: 8px;
+  border-width: 1px;
+  border: 1px solid #CAC4D0; /* var(--Schemes-Outline-Variant, #CAC4D0) */
+  font-family: 'League Spartan', sans-serif;
+  font-size: 32px;
+  font-weight: 500;
+  color: #222222;
+  background-color: #FFFFFF;
+  margin: 0 auto 32px auto;
+  display: block;
+  padding: 12px 15px;
+  box-sizing: border-box;
+}

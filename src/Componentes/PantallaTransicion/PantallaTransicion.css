@@ -1,0 +1,68 @@
+/* Estilos para el ícono de la pantalla de transición */
+.pantalla-transicion-icono {
+  width: 287px;
+  height: 287px;
+  aspect-ratio: 1/1;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin: 0 auto;
+  background-color: transparent;
+}
+.pantalla-transicion-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 24, 18, 0.55); /* Fondo oscuro */
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pantalla-transicion-contenido {
+  background: transparent;
+  border-radius: 16px;
+  box-shadow: none;
+  padding: 0;
+  min-width: unset;
+  max-width: unset;
+  min-height: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.pantalla-transicion-icono {
+  margin-bottom: 18px;
+  font-size: 38px;
+}
+
+.pantalla-transicion-mensaje {
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  color: #2F5232;
+  margin-bottom: 28px;
+  font-weight: 500;
+}
+
+.pantalla-transicion-boton {
+  background: #2F5232;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 32px;
+  font-size: 18px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: background 0.2s;
+}
+
+.pantalla-transicion-boton:hover {
+  background: #244021;
+}

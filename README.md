@@ -241,25 +241,6 @@ npm run electron
 # Package para distribución (futuro)
 npm run dist  # (pendiente de configurar)
 
-## 🏗️ Arquitectura del Proyecto
-
-```
-src/
-├── assets/                    # Recursos estáticos (imágenes, iconos)
-├── Componentes/              # Componentes reutilizables
-│   ├── AlertaModal/          # Modal para alertas
-│   ├── PantallaTransicion/   # Pantalla de carga
-│   └── Sidebar/              # Navegación lateral
-├── Login/                    # Sistema de autenticación
-│   ├── Login.jsx            # Pantalla de login principal
-│   ├── ConfirmarLogin.jsx   # Verificación 2FA
-│   └── Login.css            # Estilos del sistema de login
-├── Inicio/                   # Pantalla principal/dashboard
-├── Nuevo_Préstamo/          # Funcionalidad de préstamos
-├── Detalle_Prestamo/        # Detalles de préstamos
-└── Escanear_Tarjeta_Usuario/ # Funcionalidad de escaneo
-```
-
 ## 🔧 Cómo Funciona
 
 ### 1. **Flujo de Autenticación**

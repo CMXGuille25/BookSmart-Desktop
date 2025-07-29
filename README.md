@@ -21,7 +21,6 @@
   - Responsive design optimizado para desktop
   - Transiciones y animaciones suaves
 
-=======
 - **📱 Navegación Intuitiva**
   - Sidebar reutilizable para navegación principal
   - Sistema de rutas con React Router

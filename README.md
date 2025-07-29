@@ -3,7 +3,6 @@
 # React + Vite
 =======
 # BookSmart Desktop 📚
->>>>>>> ffdfb1e (docs: Actualizar README.md con documentación completa del proyecto)
 
 **BookSmart Desktop** es una aplicación de escritorio desarrollada con React y Electron para la gestión de préstamos bibliotecarios. La aplicación permite a los bibliotecarios administrar préstamos de libros, escanear tarjetas de usuario y mantener un control eficiente del inventario bibliotecario.
 

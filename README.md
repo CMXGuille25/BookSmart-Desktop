@@ -21,9 +21,6 @@
   - Responsive design optimizado para desktop
   - Transiciones y animaciones suaves
 
-<<<<<<< HEAD
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
->>>>>>> 6a21ac9 (Initial commit: Biblioteca Desktop React App)
 =======
 - **📱 Navegación Intuitiva**
   - Sidebar reutilizable para navegación principal

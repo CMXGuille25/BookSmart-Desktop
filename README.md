@@ -335,4 +335,3 @@ Este proyecto está bajo la Licencia MIT. Ver archivo `LICENSE` para más detall
 ---
 
 *BookSmart Desktop - Simplificando la gestión bibliotecaria* 📚✨
->>>>>>> ffdfb1e (docs: Actualizar README.md con documentación completa del proyecto)

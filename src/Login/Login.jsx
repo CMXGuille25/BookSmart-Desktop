@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Login.css';
-import logo from '../assets/logo1.png';
+import { useState } from 'react';
 
-const Login = () => {
+import { useNavigate } from 'react-router-dom';
+import logo from '../assets/logo1.png';
+import './Login.css';
+
+const Login = ({ isCameraConnected }) => {
   const navigate = useNavigate();
+  
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -202,7 +204,7 @@ const Login = () => {
               </a>
               Contacta a tu administrador
             </p>
-            <button type="submit" className="login-button" disabled={loading}>
+            <button type="submit" className="login-button" disabled={loading || !isCameraConnected}>
               {loading ? 'Ingresando...' : 'Iniciar sesión'}
             </button>
             <style>{`

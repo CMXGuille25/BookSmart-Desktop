@@ -33,7 +33,7 @@ const ConfirmLogin = () => {
       if (response.status === 200 && data.data && data.data.token) {
         // 👇 Aquí se muestra el token JWT final en la consola
         console.log('✅ JWT recibido:', data.data.token);
-        setIsLoggedIn(true);
+        
         localStorage.removeItem('temp_token');
         localStorage.removeItem('pending_user');
         localStorage.setItem('token', data.data.token);

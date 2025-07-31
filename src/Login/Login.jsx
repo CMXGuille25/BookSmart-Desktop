@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo1.png';
 import './Login.css';
 
-const Login = ({ isCameraConnected }) => {
+const Login = () => {
   const navigate = useNavigate();
   
 
@@ -65,13 +65,13 @@ const Login = ({ isCameraConnected }) => {
         }
 
         // ✅ Guardar datos de sesión final (token real)
-        localStorage.setItem('token', data.data.token);
+        localStorage.setItem('token', data.data.token.token);
         localStorage.setItem('user', JSON.stringify(data.data.user));
         
         console.log('Login directo exitoso:', {
           nombre: data.data.user.nombre,
           rol: data.data.user.rol,
-          token: data.data.token.substring(0, 20) + '...'
+          token: data.data.token.token.substring(0, 20) + '...'
         });
         
         // ✅ Ir directamente al dashboard (raro, bibliotecarios siempre necesitan 2FA)
@@ -204,7 +204,7 @@ const Login = ({ isCameraConnected }) => {
               </a>
               Contacta a tu administrador
             </p>
-            <button type="submit" className="login-button" disabled={loading || !isCameraConnected}>
+            <button type="submit" className="login-button" disabled={loading}>
               {loading ? 'Ingresando...' : 'Iniciar sesión'}
             </button>
             <style>{`

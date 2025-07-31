@@ -35,7 +35,7 @@ const Login = () => {
       const data = await response.json();
       
       // ✅ Manejo específico de códigos de respuesta de la API
-      if (response.status === 202 && data.data && data.data.requires_2fa) {
+      if (response.status === 200 && data.data && data.status === "Inicio de sesión exitoso") {
         // ✅ 2FA requerido - Paso 1 completado (credenciales correctas)
         // ✅ Validación de rol: Solo bibliotecarios en aplicación desktop
         if (data.data.user.rol !== 'Bibliotecario') {
@@ -44,7 +44,7 @@ const Login = () => {
         }
 
         // ✅ Guardar datos temporales para el paso 2 (NO el token final)
-        localStorage.setItem('temp_token', data.data.temp_token);
+        localStorage.setItem('temp_token', data.data.token.token);
         localStorage.setItem('pending_user', JSON.stringify(data.data.user));
         
         console.log('Login inicial exitoso - 2FA requerido:', {
@@ -55,27 +55,6 @@ const Login = () => {
         
         // ✅ Ir al paso 2: verificación 2FA (aquí es donde ingresas el código)
         navigate('/ConfirmarLogin');
-        
-      } else if (response.status === 200 && data.status === "Inicio de sesión exitoso") {
-        // ✅ Login directo sin 2FA (solo para otros roles si los hubiera)
-        // ✅ Validación de rol: Solo bibliotecarios en aplicación desktop
-        if (data.data.user.rol !== 'Bibliotecario') {
-          setError('Esta aplicación es solo para bibliotecarios. Tu rol actual es: ' + data.data.user.rol);
-          return;
-        }
-
-        // ✅ Guardar datos de sesión final (token real)
-        localStorage.setItem('token', data.data.token.token);
-        localStorage.setItem('user', JSON.stringify(data.data.user));
-        
-        console.log('Login directo exitoso:', {
-          nombre: data.data.user.nombre,
-          rol: data.data.user.rol,
-          token: data.data.token.token.substring(0, 20) + '...'
-        });
-        
-        // ✅ Ir directamente al dashboard (raro, bibliotecarios siempre necesitan 2FA)
-        navigate('/Dashboard');
         
       } else {
         // ✅ Manejo específico de errores de la API Booksmart

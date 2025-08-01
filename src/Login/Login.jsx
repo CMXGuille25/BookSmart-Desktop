@@ -35,7 +35,7 @@ const Login = () => {
       const data = await response.json();
       
       // ✅ Manejo específico de códigos de respuesta de la API
-      if (response.status === 200 && data.data && data.status === "Inicio de sesión exitoso") {
+      if (response.status === 202 && data.data && data.data.requires_2fa) {
         // ✅ 2FA requerido - Paso 1 completado (credenciales correctas)
         // ✅ Validación de rol: Solo bibliotecarios en aplicación desktop
         if (data.data.user.rol !== 'Bibliotecario') {
@@ -44,8 +44,9 @@ const Login = () => {
         }
 
         // ✅ Guardar datos temporales para el paso 2 (NO el token final)
-        localStorage.setItem('temp_token', data.data.token.token);
+        localStorage.setItem('temp_token', data.data.temp_token);
         localStorage.setItem('pending_user', JSON.stringify(data.data.user));
+        localStorage.setItem('biblioteca', data.data.user.bibliotecaId);
         
         console.log('Login inicial exitoso - 2FA requerido:', {
           nombre: data.data.user.nombre,

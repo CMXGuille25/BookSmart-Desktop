@@ -38,6 +38,7 @@ const ConfirmLogin = () => {
         localStorage.removeItem('pending_user');
         localStorage.setItem('token', data.data.token);
         localStorage.setItem('user', JSON.stringify(data.data.user));
+        localStorage.setItem('camera_allowed', 'true'); // Guardar estado de cámara
         navigate('/Inicio');
       } else {
         switch (response.status) {

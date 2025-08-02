@@ -6,9 +6,79 @@ const CameraStream = () => {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const detectorRef = useRef(null);
+  const canvasRef = useRef(null);
   const bibliotecaId = localStorage.getItem('biblioteca');
   const [isStreaming, setIsStreaming] = useState(false);
   const [faceDetected, setFaceDetected] = useState(false);
+
+  // Function to capture current frame and send to API
+  const captureAndSendFrame = async () => {
+    if (!videoRef.current) {
+      console.error("❌ Cannot capture: video element not available");
+      return;
+    }
+
+    // Check if video is ready and has dimensions
+    if (videoRef.current.readyState < 2 || videoRef.current.videoWidth === 0) {
+      console.error("❌ Cannot capture: video not ready yet", {
+        readyState: videoRef.current.readyState,
+        videoWidth: videoRef.current.videoWidth,
+        videoHeight: videoRef.current.videoHeight
+      });
+      return;
+    }
+
+    try {
+      // Create canvas to capture frame
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Set canvas dimensions to match video
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      
+      // Draw current video frame to canvas
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      
+      // Convert to blob
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          console.error("❌ Failed to create image blob");
+          return;
+        }
+
+        // Create FormData to send image and bibliotecaId
+        const formData = new FormData();
+        formData.append('image', blob, 'capture.jpg');
+        formData.append('bibliotecaId', bibliotecaId);
+
+        try {
+          console.log("📤 Sending capture to API...", {
+            bibliotecaId: bibliotecaId,
+            imageSize: blob.size,
+            imageType: blob.type
+          });
+
+          const response = await fetch('/api/your-endpoint', { // Replace with your actual API endpoint
+            method: 'POST',
+            body: formData
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            console.log("✅ Capture sent successfully:", result);
+          } else {
+            console.error("❌ API error:", response.status, response.statusText);
+          }
+        } catch (apiError) {
+          console.error("❌ Network error sending capture:", apiError);
+        }
+      }, 'image/jpeg', 0.8); // JPEG with 80% quality
+
+    } catch (error) {
+      console.error("❌ Error capturing frame:", error);
+    }
+  };
 
   // Initialize TensorFlow and face detector
   const initializeDetector = async () => {
@@ -87,6 +157,8 @@ const CameraStream = () => {
       
       if (hasFace && !faceDetected) {
         console.log("✅ New face detected!");
+        // Automatically capture and send when a new face is detected
+        captureAndSendFrame();
       }
 
       // Continue detection loop at ~15 FPS (67ms delay)

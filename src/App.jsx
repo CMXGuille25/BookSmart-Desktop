@@ -9,24 +9,34 @@ import Login from './Login/Login.jsx';
 import Buscar_Libros from './Nuevo_Préstamo/Buscar_Libros.jsx';
 
 function App() {
-  const [isCameraConnected, setIsCameraConnected] = useState(true);
+  const [isCameraConnected, setIsCameraConnected] = useState(false);
   const [cameraAllowed, setCameraAllowed] = useState(false);
-  const [cameraError, setCameraError] = useState('');
 
   useEffect(() => {
-  const handleStorage = () => {
+    // Check initial camera permission state
     const allowed = localStorage.getItem('camera_allowed') === 'true';
     setCameraAllowed(allowed);
-  };
 
-  window.addEventListener('storage', handleStorage);
-  return () => window.removeEventListener('storage', handleStorage);
-}, []);
+    // Listen for changes
+    const handleStorage = () => {
+      const allowed = localStorage.getItem('camera_allowed') === 'true';
+      setCameraAllowed(allowed);
+    };
 
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
 
   return (
     <BrowserRouter>
-      <WebCamaraManager onCameraStatusChange={setIsCameraConnected} />
+      <WebCamaraManager onCameraStatusChange={(status) => {
+        setIsCameraConnected(status);
+        // Only show camera stream if we have both connection and permission
+        if (status) {
+          setCameraAllowed(true);
+        }
+      }} />
+      
       {!isCameraConnected && (
         <div
           style={{
@@ -44,12 +54,14 @@ function App() {
             zIndex: 9999
           }}
         >
-          ⚠️ {cameraError || 'Cámara USB desconectada. Por favor, conéctala para continuar.'}
+          ⚠️ Cámara USB desconectada. Por favor, conéctala para continuar.
         </div>
       )}
+
       {cameraAllowed && isCameraConnected && (
         <CameraStream />
       )}
+
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/ConfirmarLogin" element={<ConfirmarLogin />} />

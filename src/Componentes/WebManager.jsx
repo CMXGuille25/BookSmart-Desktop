@@ -1,16 +1,41 @@
 import { useEffect, useState } from 'react';
 
 const WebCamaraManager = ({ onCameraStatusChange }) => {
-  const [isCameraConnected, setIsCameraConnected] = useState(false); // Start with false by default
+  const [isCameraConnected, setIsCameraConnected] = useState(false);
 
   useEffect(() => {
+    const requestPermissions = async () => {
+      try {
+        // First request general camera permissions
+        await navigator.mediaDevices.getUserMedia({ video: true })
+          .then(stream => {
+            // Immediately stop the test stream
+            stream.getTracks().forEach(track => track.stop());
+            console.log('📸 Camera permissions granted');
+          });
+        
+        return true;
+      } catch (err) {
+        console.error('❌ Camera permission denied:', err.message);
+        return false;
+      }
+    };
+
     const checkForUSBCamera = async () => {
       try {
+        // First ensure we have permissions
+        const hasPermissions = await requestPermissions();
+        if (!hasPermissions) {
+          setIsCameraConnected(false);
+          onCameraStatusChange?.(false);
+          return;
+        }
+
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoInputs = devices.filter(device => device.kind === 'videoinput');
         console.log('📝 Available cameras:', videoInputs.map(d => d.label));
 
-        // Find USB camera
+        // Find USB camera with stricter criteria
         const usbCamera = videoInputs.find(device => 
           device.label && 
           !device.label.toLowerCase().includes('integrated') &&
@@ -29,7 +54,7 @@ const WebCamaraManager = ({ onCameraStatusChange }) => {
           return;
         }
 
-        // Try to access specifically the USB camera
+        // Test the specific USB camera
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
             deviceId: { exact: usbCamera.deviceId }
@@ -40,11 +65,13 @@ const WebCamaraManager = ({ onCameraStatusChange }) => {
         stream.getTracks().forEach(track => track.stop());
 
         console.log('✅ USB camera detected and accessible:', usbCamera.label);
+        localStorage.setItem('camera_allowed', 'true');
         setIsCameraConnected(true);
         onCameraStatusChange?.(true);
 
       } catch (err) {
         console.error('❌ Camera access error:', err.message);
+        localStorage.setItem('camera_allowed', 'false');
         setIsCameraConnected(false);
         onCameraStatusChange?.(false);
       }

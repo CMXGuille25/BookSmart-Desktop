@@ -1,12 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   return (
     <aside className="sidebar">
       <div className="hola-bibliotecario">Hola, bibliotecario</div>
       <div className="sidebar-divider" />
-      <div className="menu-item menu-inicio">
+      <div className="menu-item menu-inicio" onClick={() => navigate('/Inicio')} style={{ cursor: 'pointer' }}>
         <svg className="sidebar-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" fill="none">
           <path d="M14.1666 25.5V20.4167C14.1666 19.3121 15.0621 18.4167 16.1666 18.4167H17.8333C18.9379 18.4167 19.8333 19.3121 19.8333 20.4167V25.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M2.83337 11.3333L16.7317 4.38417C16.9006 4.29971 17.0995 4.29971 17.2684 4.38417L31.1667 11.3333" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -14,7 +16,7 @@ const Sidebar = () => {
         </svg>
         <span>Inicio</span>
       </div>
-      <div className="menu-item menu-usuarios">
+      <div className="menu-item menu-usuarios" onClick={() => navigate('/Usuarios')} style={{ cursor: 'pointer' }}>
         <svg className="sidebar-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" fill="none">
           <path d="M7.08337 28.3333V24C7.08337 20.134 10.2174 17 14.0834 17H19.9167C23.7827 17 26.9167 20.134 26.9167 24V28.3333" stroke="#FEF7FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M17 17C20.1297 17 22.6667 14.4629 22.6667 11.3333C22.6667 8.20371 20.1297 5.66666 17 5.66666C13.8704 5.66666 11.3334 8.20371 11.3334 11.3333C11.3334 14.4629 13.8704 17 17 17Z" stroke="#FEF7FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

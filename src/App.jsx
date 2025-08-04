@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import CameraStream from './Componentes/CamaraStream.jsx';
 import WebCamaraManager from './Componentes/WebManager.jsx';
+import Confirmar_Prestamo from './Detalle_Prestamo/Confirmar_Prestamo.jsx';
 import Detalle_Prestamo from './Detalle_Prestamo/Detalle_Prestamo.jsx';
+import Escanear_Tarjeta_Usuario from './Escanear_Tarjeta_Usuario/Escanear_Tarjeta_Usuario.jsx';
 import Inicio from './Inicio/Inicio.jsx';
 import ConfirmarLogin from './Login/ConfirmarLogin.jsx';
 import Login from './Login/Login.jsx';
 import Buscar_Libros from './Nuevo_Préstamo/Buscar_Libros.jsx';
+import Buscar_Usuarios from './Usuario/Buscar_Usuarios.jsx';
+import Editar_Usuario from './Usuario/Editar_Usuario.jsx';
 
 function App() {
   const [isCameraConnected, setIsCameraConnected] = useState(false);
@@ -63,11 +67,15 @@ function App() {
       )}
 
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/Usuarios" element={<Buscar_Usuarios />} />
+        <Route path="/Editar_Usuario" element={<Editar_Usuario />} />
         <Route path="/ConfirmarLogin" element={<ConfirmarLogin />} />
         <Route path="/Inicio" element={<Inicio />} />
         <Route path="/Detalle_Prestamo" element={<Detalle_Prestamo />} />
+        <Route path="/Escanear_Tarjeta_Usuario" element={<Escanear_Tarjeta_Usuario />} />
         <Route path="/Buscar_Libros" element={<Buscar_Libros />} />
+        <Route path="/Confirmar_Prestamo" element={<Confirmar_Prestamo />} />
       </Routes>
     </BrowserRouter>
   );

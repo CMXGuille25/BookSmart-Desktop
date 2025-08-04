@@ -103,24 +103,6 @@ const Login = () => {
         <div className="login-card">
           <img src={logo} alt="Logo BookSmart" className="login-logo" />
           <p className="login-subtitle">Inicie sesión para continuar</p>
-          
-          {/* ✅ Mensaje informativo para desarrollo */}
-          {process.env.NODE_ENV === 'development' && (
-            <div style={{
-              background: '#e3f2fd',
-              border: '1px solid #2196f3',
-              borderRadius: '6px',
-              padding: '8px 12px',
-              margin: '10px 0',
-              fontSize: '12px',
-              textAlign: 'center',
-              color: '#1976d2'
-            }}>
-              <strong>Credenciales de prueba:</strong><br/>
-              bibliotecario.desktop@test.com / Password123!
-            </div>
-          )}
-          
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
               <label>Correo electrónico</label>

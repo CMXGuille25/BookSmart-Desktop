@@ -1,0 +1,1198 @@
+/* Estilos para limpiar Buscar_Usuarios.jsx */
+.usuario-search-bar-form {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.usuario-search-bar-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.usuario-search-input {
+  width: 100%;
+  min-width: 350px;
+  max-width: 700px;
+  padding-right: 48px;
+  font-size: 18px;
+  font-family: 'League Spartan', sans-serif;
+  background: var(--Schemes-Surface-Container, #F3EDF7);
+  color: #453726;
+  font-weight: 500;
+  outline: none;
+  transition: background 0.2s;
+}
+
+.usuario-search-btn-absolute {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.usuario-search-filter-wrapper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.usuario-search-filter-label {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #453726;
+}
+
+.usuario-search-filter-select {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: none;
+  background: #F3E9DF;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #453726;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s;
+}
+.usuario-editar-registrar-btn {
+  display: flex;
+  width: 145px;
+  height: 38px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #2F5232;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.30), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  color: #FFF;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  margin: 24px auto 0 auto;
+  letter-spacing: 0.1px;
+  box-sizing: border-box;
+  transition: background 0.2s;
+}
+.usuario-editar-registrar-btn:hover {
+  background: #3A6B3A;
+}
+/* Cuadro debajo de los títulos en los recuadros derecho */
+.usuario-editar-cuadro-imagen-placeholder {
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+  background: #A47149;
+  border-radius: 10px;
+  margin: 0 auto 0 auto;
+  margin-bottom: -27px;
+}
+/* Títulos de los recuadros derecho */
+.usuario-editar-cuadro-titulo {
+  align-self: stretch;
+  color: #453726;
+  text-align: center;
+  font-family: "League Spartan";
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 62.5% */
+  letter-spacing: 0.1px;
+  margin-bottom: 5px;
+  margin-top: 10px;
+  padding-top: 0px;
+  position: relative;
+  top: 0px;
+}
+/* Botón Guardar cambios debajo de la tarjeta de información de usuario */
+.usuario-editar-guardar-cambios-btn-custom {
+  display: flex;
+  width: 210px;
+  height: 43.105px;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  margin: 8px auto 0 auto;
+  background: #706A64;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.30), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+}
+/* Cuadro blanco de información de usuario en EditarUsuario */
+.usuario-editar-info-card {
+  background: #FEF7FF;
+  border-radius: 10px;
+  padding: 24px 32px;
+  margin-top: -300px;
+  width: 432px;
+  height: 218px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  justify-content: center;
+  align-items: stretch;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}
+
+.usuario-editar-info-row {
+  display:flex;
+  grid-template-columns: 114px 1fr;
+  column-gap: 36px;
+  align-items: center;
+  width: 100%;
+  padding: 5px;
+  row-gap: 23px;
+}
+
+.usuario-editar-info-label {
+  width: 114px;
+  grid-row: 1 / span 1;
+  grid-column: 1 / span 1;
+  color: #453726;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-align: left;
+  padding-right: 0;
+  margin-left: -10px;
+}
+
+.usuario-editar-info-value {
+  color: #A47149;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  text-align: right;
+  padding-left: 40px;
+}
+/* Imagen del libro vacío con margen superior */
+.usuario-editar-libro-imagen-top {
+  margin-bottom: 330px;
+}
+/* Cuadros secundarios en EditarUsuario */
+.usuario-editar-cuadro-secundario {
+  display: flex;
+  width: 318px;
+  height: 285px;
+  padding: 13px 81px 28px 81px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(225, 197, 171, 0.80);
+  margin-left: 30px;
+}
+
+.usuario-editar-cuadro-secundario-primero {
+  margin-top: 32px;
+}
+
+.usuario-editar-cuadro-secundario-segundo {
+  margin-top: 10px;
+}
+/* ====== ESTILOS PARA EDITAR_USUARIO (AISLADOS) ====== */
+.usuario-editar-bg {
+  width: 100vw;
+  height: 100vh;
+  background: #FFF9EC;
+  display: flex;
+  font-family: 'League Spartan', sans-serif;
+}
+.usuario-editar-content-row {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 0;
+}
+.usuario-editar-card {
+  width: 550px;
+  height: 560px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(225, 197, 171, 0.80);
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 32px;
+  box-sizing: border-box;
+  border: 2px #a47149;
+  margin-top: 32px;
+}
+.usuario-editar-card-secundario {
+  width: 307px;
+  height: 560px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(225, 197, 171, 0.80);
+  margin-top: 32px;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 0 0 0;
+  box-sizing: border-box;
+}
+.usuario-editar-libro-imagen {
+  width: 177px;
+  height: 177px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: url('../assets/Libro_vacio.png') 50% / contain no-repeat;
+  border: 2px #a47149;
+  margin-left: 1px;
+}
+.usuario-editar-fecha-prestamo {
+  display: flex;
+  width: 207px;
+  padding: 0px 81px 28px 81px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #3A332A;
+  font-family: "League Spartan";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  margin-top: 53px;
+}
+.usuario-editar-barra-progreso {
+  width: 45px;
+  height: 25px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #2F5233;
+  margin: -10px auto 0 auto;
+}
+.usuario-editar-barra-progreso-secundaria {
+  width: 278.182px;
+  height: 25px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(69, 55, 38, 0.51);
+}
+.usuario-editar-guardar-cambios-btn {
+  display: flex;
+  width: 210px;
+  height: 43.105px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: calc(1 - 0.5);
+  border-radius: 8px;
+  background: #A47149;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  color: #FFF;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  margin: 20px auto 0 auto;
+}
+.usuario-editar-info-dias-entrega {
+  width: 468px;
+  color: #3A332A;
+  font-family: 'Rowdies', sans-serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+}
+.usuario-editar-fecha-valor {
+  display: flex;
+  width: 220px;
+  height: 20px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #453726;
+  font-family: "League Spartan";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+}
+.usuario-editar-titulo-libro {
+  display: flex;
+  width: 225px;
+  height: 34px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #453726;
+  font-family: "League Spartan";
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  margin-left: -8px;
+  margin-bottom: 18px;
+}
+.usuario-editar-autor-libro {
+  display: flex;
+  width: 225px;
+  height: 34px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #453726;
+  font-family: "League Spartan";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  margin-left: -8px;
+  margin-bottom: 18px;
+}
+.usuario-editar-estado-prestamo {
+  display: flex;
+  width: 225px;
+  height: 34px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #453726;
+  font-family: "League Spartan";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  margin-left: -8px;
+}
+.usuario-editar-desplegable-prestamo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 35px;
+  width: 170px;
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(69, 55, 38, 0.15);
+  background: #FFF;
+  color: #453726;
+  font-family: "League Spartan";
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: -8px;
+  margin-top: 2px;
+}
+.usuario-editar-desplegable-texto {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 17px;
+  color: #000;
+  font-family: "League Spartan";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  border: none;
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 40px;
+}
+.usuario-editar-desplegable-svg {
+  position: absolute;
+  top: -1px;
+  right: 4px;
+  width: 35px;
+  height: 35px;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+/* Importar League Spartan desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;700&display=swap');
+
+/* Aplicar League Spartan a toda la pantalla de Buscar Usuarios */
+.usuario-bg, .usuario-main-content, .usuario-prestamos-title, .usuario-prestamos-desc, .usuario-prestamos-desc-row, .usuario-nuevo-prestamo, .usuario-prestamos-header, .usuario-prestamos-list, .usuario-prestamo-card, .usuario-card-icon, .usuario-card-info, .usuario-libro-titulo, .usuario-libro-autor, .usuario-libro-row, .usuario-libro-entrega, .usuario-libro-responsable, .usuario-libro-fecha, .usuario-libro-usuario, .usuario-editar-btn, .usuario-editar-btn-text, .usuario-dropdown-filtrar-estado, .usuario-filtrar-estado, .usuario-filtrar-estado-label, .usuario-dropdown-filtrar-estado-menu {
+  font-family: 'League Spartan', sans-serif;
+}
+/* ====== ESTILOS PARA BUSCAR_USUARIOS (AISLADOS) ====== */
+.usuario-bg {
+  width: 100vw;
+  height: 100vh;
+  background: #FFF9EC;
+  display: flex;
+  font-family: 'League Spartan', sans-serif;
+  overflow: hidden;
+}
+.usuario-main-content {
+  flex: 1;
+  height: 100vh;
+  padding: 48px 80px 0 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow-y: auto;
+}
+.usuario-prestamos-title {
+  color: #453726;
+  font-size: 64px;
+  font-family: 'Rowdies', sans-serif;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+  margin-bottom: 0px;
+}
+.usuario-prestamos-desc-row {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 8px;
+}
+.usuario-prestamos-desc {
+  color: #4B453D;
+  font-size: 24px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 400;
+  line-height: 20px;
+  margin-top: 25px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+.usuario-nuevo-prestamo {
+  background: #2F5233;
+  box-shadow: 0px 1px 3px 1px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  padding: 10px 24px;
+  color: white;
+  font-size: 15px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  margin-left: 230px;
+}
+.usuario-nuevo-prestamo-svg {
+  width: 16px;
+  height: 18px;
+  flex-shrink: 0;
+  aspect-ratio: 11/12;
+  display: block;
+}
+.usuario-prestamos-divider {
+  width: 100%;
+  border: none;
+  border-top: 4px solid #453726;
+  margin: 0 0 24px 0;
+}
+.usuario-prestamos-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.usuario-prestamos-list {
+  background: rgba(225, 197, 171, 0.80);
+  border-radius: 10px;
+  padding: 32px 24px;
+  margin-top: -18px;
+  width: 100%;
+  display: flex;
+  gap: 13px;
+  flex-direction: column;
+  gap: 32px;
+}
+.usuario-prestamo-card {
+  background: #FEF7FF;
+  box-shadow: 0px 4px 4px rgba(0,0,0,0.15);
+  border-radius: 10px;
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.usuario-card-icon {
+  flex-shrink: 0;
+}
+.usuario-card-icon-img {
+  width: 94.862px;
+  height: 94.862px;
+  flex-shrink: 0;
+  aspect-ratio: 1/1;
+  border-radius: 8px;
+  background-image: url('../assets/Libro_vacio.png');
+  background-color: var(--Schemes-Surface-Container-High, #ECE6F0);
+  background-position: 50% 50%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-blend-mode: luminosity, normal;
+}
+.usuario-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.usuario-libro-titulo {
+  font-size: 20px;
+  font-weight: 500;
+  color: #000;
+}
+.usuario-libro-autor {
+  font-size: 15px;
+  font-weight: 400;
+  color: #000;
+}
+.usuario-libro-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 2px;
+}
+.usuario-libro-entrega, .usuario-libro-responsable {
+  font-size: 15px;
+  font-weight: 400;
+  color: #000;
+}
+.usuario-libro-fecha, .usuario-libro-usuario {
+  font-size: 14px;
+  font-weight: 500;
+  color: #453726;
+  margin-left: 14px;
+}
+.usuario-editar-btn {
+  background: #A47149;
+  box-shadow: 0px 1px 3px 1px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  padding: 10px 24px;
+  color: white;
+  font-size: 15px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+}
+.usuario-editar-btn-text {
+  color: white;
+  font-size: 15px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+.usuario-editar-btn-svg {
+  width: 21px;
+  height: 21px;
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin: 0;
+}
+ .usuario-editar-btn-svg {
+  width: 21px;
+  height: 21px;
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin: 0;
+}
+/* Descripción especial para el texto de administrar préstamos */
+ .usuario-prestamos-desc-admin {
+  display: flex;
+  width: 743px;
+  height: 80px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #4B453D;
+  font-family: 'League Spartan';
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 83.333% */
+  letter-spacing: 0.1px;
+}
+/* Dropdown Filtrar Por Estado */
+/* Search bar styles */
+.usuario-search-bar {
+  display: flex;
+  width: 616px;
+  height: 56px;
+  max-width: 720px;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  border-radius: 28px;
+  background: var(--Schemes-Surface-Container, #F3EDF7);
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+.usuario-search-input {
+  flex: 1;
+  height: 40px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 18px;
+  font-family: 'League Spartan', sans-serif;
+  color: #453726;
+  padding-left: 8px;
+  border-radius: 20px;
+  box-shadow: none;
+}
+.usuario-search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  height: 40px;
+}
+/* Card info y detalles de libro */
+.card-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 94.862px;
+}
+
+.libro-titulo {
+  display: flex;
+  width: 163.831px;
+  height: 20.302px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #000;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  margin-bottom: 2px;
+}
+
+.libro-autor {
+  display: flex;
+  width: 163.831px;
+  height: 20.302px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #000;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  margin-bottom: 2px;
+}
+
+.libro-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.libro-entrega, .libro-responsable {
+  display: flex;
+  width: 213.441px;
+  height: 20.302px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #000;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+}
+
+.libro-fecha, .libro-usuario {
+  display: flex;
+  width: 106.144px;
+  height: 20.302px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #453726;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  margin-left: 14px;
+}
+
+/* Botón editar */
+/* Botón editar alineado y estilizado correctamente */
+.editar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 8px;
+  background: #A47149;
+  box-shadow: 0px 1px 3px 1px rgba(0,0,0,0.15);
+  min-width: 110px;
+  height: 34px;
+  color: #FFF;
+  font-family: "League Spartan";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  border: none;
+  cursor: pointer;
+  padding: 0 16px;
+  margin-top: 2px;
+  margin-right: 2px;
+  overflow: hidden;
+}
+
+.nuevo-prestamo-svg {
+  width: 16px;
+  height: 18px;
+  flex-shrink: 0;
+  aspect-ratio: 11/12;
+  display: block;
+}
+
+/* Ajustes de margen para los menús del sidebar */
+.menu-item {
+  margin-left: 40px;
+}
+/* Líneas divisorias en el sidebar */
+.sidebar-divider {
+  width: 80%;
+  height: 2px;
+  background: #2D2418;
+  margin: 0 auto 32px auto;
+  border: none;
+}
+/* Fila de descripción y botón */
+.prestamos-desc-row {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 8px;
+}
+
+.prestamos-desc-row .prestamos-desc {
+  font-size: 24px;
+  color: #4B453D;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.10em;
+}
+
+.prestamos-desc-row .nuevo-prestamo {
+  margin-left: 24px;
+}
+/* Estilos para textos principales */
+.prestamos-title {
+  color: #453726;
+  font-size: 64px;
+  font-family: 'Rowdies', sans-serif;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+
+.prestamos-desc {
+  color: #4B453D;
+  font-size: 24px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 400;
+  line-height: 20px;
+  margin-top: 25px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+
+.filtrar-estado {
+  color: #453726;
+  font-size: 20px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 300;
+  text-transform: capitalize;
+  word-wrap: break-word;
+}
+
+.libro-titulo {
+  color: black;
+  font-size: 20px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+
+.libro-autor {
+  color: black;
+  font-size: 15px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+
+.libro-fecha, .libro-usuario {
+  color: #453726;
+  font-size: 14px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+
+.libro-entrega, .libro-responsable {
+  color: black;
+  font-size: 15px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+
+.editar-btn {
+  color: white;
+  font-size: 15px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+
+.cerrar-sesion {
+  color: white;
+  font-size: 28px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+
+.menu-usuarios, .menu-cambiar, .menu-inicio {
+  color: white;
+  font-size: 28px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+
+.hola-bibliotecario {
+  color: white;
+  font-size: 30px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+}
+
+.nuevo-prestamo {
+  color: #FFF;
+  font-family: "League Spartan";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 133.333% */
+  letter-spacing: 0.1px;
+  word-wrap: break-word;
+  display: flex;
+  width: auto;
+  min-width: 146px;
+  height: 30px;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  background: #2F5233;
+  /* M3/Elevation Light/1 */
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+}
+
+/* Fondo principal */
+.inicio-bg {
+  width: 100vw;
+  height: 100vh;
+  background: #FFF9EC;
+  display: flex;
+  font-family: 'League Spartan', sans-serif;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 310px;
+  height: 100vh;
+  background: #453726;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 80px 0 0 0;
+  position: relative;
+  flex-shrink: 0;
+  /* Sidebar siempre visible, sin scroll */
+  overflow: visible;
+}
+
+.sidebar > div {
+  margin-left: 24px;
+  margin-bottom: 50px;
+/* Separaciones grandes y pequeñas en el sidebar */
+.hola-bibliotecario {
+  margin-bottom: 48px;
+}
+.sidebar-divider {
+  width: 90%;
+  height: 3px;
+  background: #2D2418;
+  margin: 32px 0 32px 0;
+  border: none;
+  border-radius: 2px;
+}
+.menu-inicio {
+  margin-bottom: 28px;
+}
+.menu-usuarios {
+  margin-bottom: 28px;
+}
+.menu-cambiar {
+  margin-bottom: 0;
+}
+.cerrar-sesion {
+  margin-top: 32px;
+}
+}
+
+.menu-inicio, .menu-usuarios, .menu-cambiar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  margin-bottom: 32px;
+}
+
+.cerrar-sesion {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  height: 100vh;
+  padding: 48px 80px 0 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow-y: auto;
+  /* Más separación del sidebar */
+}
+
+.prestamos-title {
+  color: #453726;
+  font-size: 64px;
+  font-family: 'Rowdies', sans-serif;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+  margin-bottom: 0px;
+}
+
+.prestamos-desc {
+  color: #4B453D;
+  font-size: 24px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0.10em;
+  word-wrap: break-word;
+  margin-bottom: 8px;
+}
+
+.prestamos-divider {
+  width: 100%;
+  border: none;
+  border-top: 4px solid #453726;
+  margin: 0 0 24px 0;
+}
+
+.prestamos-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.filtrar-estado {
+  width: 306px;
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  background: #FFF;
+  border-radius: 16px;
+  border: 1.5px solid rgba(69, 55, 38, 0.15);
+  font-size: 20px;
+  color: #453726;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 300;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.nuevo-prestamo {
+  background: #2F5233;
+  box-shadow: 0px 1px 3px 1px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  padding: 10px 24px;
+  color: white;
+  font-size: 15px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.prestamos-list {
+  background: rgba(225, 197, 171, 0.80);
+  border-radius: 10px;
+  padding: 32px 24px;
+  margin-top: 1px;
+  width: 100%;
+  display: flex;
+  gap: 13px;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.prestamo-card {
+  background: #FEF7FF;
+  box-shadow: 0px 4px 4px rgba(0,0,0,0.15);
+  border-radius: 10px;
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.card-icon {
+  flex-shrink: 0;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editar-btn {
+  background: #A47149;
+  box-shadow: 0px 1px 3px 1px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  padding: 10px 24px;
+  color: white;
+  font-size: 15px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.libro-titulo {
+  font-size: 20px;
+  font-weight: 500;
+  color: #000;
+}
+
+.libro-autor {
+  font-size: 15px;
+  font-weight: 400;
+  color: #000;
+}
+
+.libro-entrega, .libro-responsable {
+  font-size: 15px;
+  font-weight: 400;
+  color: #000;
+}
+
+.libro-fecha, .libro-usuario {
+  font-size: 14px;
+  font-weight: 500;
+  color: #453726;
+}

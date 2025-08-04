@@ -1,3 +1,25 @@
+/* Icono del libro vacío para las tarjetas de préstamo */
+.card-icon-img {
+  width: 94.862px;
+  height: 94.862px;
+  flex-shrink: 0;
+  aspect-ratio: 1/1;
+  border-radius: 8px;
+  background-image: url('../assets/Libro_vacio.png');
+  background-color: var(--Schemes-Surface-Container-High, #ECE6F0);
+  background-position: 50% 50%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-blend-mode: luminosity, normal;
+}
+.editar-btn-svg {
+  width: 21px;
+  height: 21px;
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin: 0;
+}
 /* Descripción especial para el texto de administrar préstamos */
 .prestamos-desc-admin {
   display: flex;
@@ -174,27 +196,25 @@
 .editar-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   border-radius: 8px;
   background: #A47149;
   box-shadow: 0px 1px 3px 1px rgba(0,0,0,0.15);
-  word-wrap: break-word;
-  min-width: 120px;
-  width: 114px;
-  height: 30px;
+  min-width: 110px;
+  height: 34px;
   color: #FFF;
   font-family: "League Spartan";
-  margin-top: 2px;
   font-size: 15px;
   font-style: normal;
   font-weight: 500;
-  line-height: 20px; /* 133.333% */
+  line-height: 20px;
   letter-spacing: 0.1px;
-  height: 34px;
-  flex-shrink: 0;
-  aspect-ratio: 1/1;
+  border: none;
+  cursor: pointer;
+  padding: 0 16px;
+  margin-top: 2px;
   margin-right: 2px;
-  display: inline-block;
+  overflow: hidden;
 }
 
 .nuevo-prestamo-svg {

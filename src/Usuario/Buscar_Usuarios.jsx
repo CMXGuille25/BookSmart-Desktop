@@ -53,6 +53,11 @@ const Inicio = () => {
     navigate('/Editar_Usuario'); // Aquí podrías pasar datos del usuario
   };
 
+  // Handler para el botón Nuevo usuario
+  const handleNuevoUsuarioClick = () => {
+    navigate('/Registrar_Usuario');
+  };
+
   // Handler para buscar por correo y mostrar modal si no se encuentra
   const handleBuscar = (e) => {
     e.preventDefault();
@@ -79,7 +84,7 @@ const Inicio = () => {
         <h1 className="usuario-prestamos-title">Usuarios</h1>
         <div className="usuario-prestamos-desc-row">
           <div className="usuario-prestamos-desc">Administra los datos de los usuarios registrados.</div>
-          <button className="usuario-nuevo-prestamo">
+          <button className="usuario-nuevo-prestamo" onClick={handleNuevoUsuarioClick}>
             Nuevo usuario
             <svg className="usuario-nuevo-prestamo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 12" fill="none">
               <path d="M3.66675 6H5.50008M7.33341 6H5.50008M5.50008 6V4M5.50008 6V8" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

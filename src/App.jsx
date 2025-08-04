@@ -9,12 +9,13 @@ import Escanear_Tarjeta_Usuario from './Escanear_Tarjeta_Usuario/Escanear_Tarjet
 import Buscar_Usuarios from './Usuario/Buscar_Usuarios.jsx';
 import Confirmar_Prestamo from './Detalle_Prestamo/Confirmar_Prestamo.jsx';
 import Editar_Usuario from './Usuario/Editar_Usuario.jsx';
+import Registrar_Usuario from './Usuario/Registrar_Usuario.jsx';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login   />} />
         <Route path="/Usuarios" element={<Buscar_Usuarios />} />
         <Route path="/Editar_Usuario" element={<Editar_Usuario />} />
         <Route path="/ConfirmarLogin" element={<ConfirmarLogin />} />
@@ -23,6 +24,7 @@ function App() {
         <Route path="/Escanear_Tarjeta_Usuario" element={<Escanear_Tarjeta_Usuario />} />
         <Route path="/Buscar_Libros" element={<Buscar_Libros />} />
         <Route path="/Confirmar_Prestamo" element={<Confirmar_Prestamo />} />
+        <Route path="/Registrar_Usuario" element={<Registrar_Usuario />} />
       </Routes>
     </BrowserRouter>
   );

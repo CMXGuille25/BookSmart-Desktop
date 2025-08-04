@@ -16,7 +16,7 @@ const Sidebar = () => {
         </svg>
         <span>Inicio</span>
       </div>
-      <div className="menu-item menu-usuarios">
+      <div className="menu-item menu-usuarios" onClick={() => navigate('/Usuarios')} style={{ cursor: 'pointer' }}>
         <svg className="sidebar-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" fill="none">
           <path d="M7.08337 28.3333V24C7.08337 20.134 10.2174 17 14.0834 17H19.9167C23.7827 17 26.9167 20.134 26.9167 24V28.3333" stroke="#FEF7FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M17 17C20.1297 17 22.6667 14.4629 22.6667 11.3333C22.6667 8.20371 20.1297 5.66666 17 5.66666C13.8704 5.66666 11.3334 8.20371 11.3334 11.3333C11.3334 14.4629 13.8704 17 17 17Z" stroke="#FEF7FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

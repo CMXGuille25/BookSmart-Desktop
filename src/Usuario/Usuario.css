@@ -1,3 +1,213 @@
+/* Estilos para limpiar Buscar_Usuarios.jsx */
+.usuario-search-bar-form {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.usuario-search-bar-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.usuario-search-input {
+  width: 100%;
+  min-width: 350px;
+  max-width: 700px;
+  padding-right: 48px;
+  font-size: 18px;
+  font-family: 'League Spartan', sans-serif;
+  background: var(--Schemes-Surface-Container, #F3EDF7);
+  color: #453726;
+  font-weight: 500;
+  outline: none;
+  transition: background 0.2s;
+}
+
+.usuario-search-btn-absolute {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.usuario-search-filter-wrapper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.usuario-search-filter-label {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #453726;
+}
+
+.usuario-search-filter-select {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: none;
+  background: #F3E9DF;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #453726;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s;
+}
+.usuario-editar-registrar-btn {
+  display: flex;
+  width: 145px;
+  height: 38px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #2F5232;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.30), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  color: #FFF;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  margin: 24px auto 0 auto;
+  letter-spacing: 0.1px;
+  box-sizing: border-box;
+  transition: background 0.2s;
+}
+.usuario-editar-registrar-btn:hover {
+  background: #3A6B3A;
+}
+/* Cuadro debajo de los títulos en los recuadros derecho */
+.usuario-editar-cuadro-imagen-placeholder {
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+  background: #A47149;
+  border-radius: 10px;
+  margin: 0 auto 0 auto;
+  margin-bottom: -27px;
+}
+/* Títulos de los recuadros derecho */
+.usuario-editar-cuadro-titulo {
+  align-self: stretch;
+  color: #453726;
+  text-align: center;
+  font-family: "League Spartan";
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 62.5% */
+  letter-spacing: 0.1px;
+  margin-bottom: 5px;
+  margin-top: 10px;
+  padding-top: 0px;
+  position: relative;
+  top: 0px;
+}
+/* Botón Guardar cambios debajo de la tarjeta de información de usuario */
+.usuario-editar-guardar-cambios-btn-custom {
+  display: flex;
+  width: 210px;
+  height: 43.105px;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  margin: 8px auto 0 auto;
+  background: #706A64;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.30), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+}
+/* Cuadro blanco de información de usuario en EditarUsuario */
+.usuario-editar-info-card {
+  background: #FEF7FF;
+  border-radius: 10px;
+  padding: 24px 32px;
+  margin-top: -300px;
+  width: 432px;
+  height: 218px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  justify-content: center;
+  align-items: stretch;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}
+
+.usuario-editar-info-row {
+  display:flex;
+  grid-template-columns: 114px 1fr;
+  column-gap: 36px;
+  align-items: center;
+  width: 100%;
+  padding: 5px;
+  row-gap: 23px;
+}
+
+.usuario-editar-info-label {
+  width: 114px;
+  grid-row: 1 / span 1;
+  grid-column: 1 / span 1;
+  color: #453726;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-align: left;
+  padding-right: 0;
+  margin-left: -10px;
+}
+
+.usuario-editar-info-value {
+  color: #A47149;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  text-align: right;
+  padding-left: 40px;
+}
+/* Imagen del libro vacío con margen superior */
+.usuario-editar-libro-imagen-top {
+  margin-bottom: 330px;
+}
+/* Cuadros secundarios en EditarUsuario */
+.usuario-editar-cuadro-secundario {
+  display: flex;
+  width: 318px;
+  height: 285px;
+  padding: 13px 81px 28px 81px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(225, 197, 171, 0.80);
+  margin-left: 30px;
+}
+
+.usuario-editar-cuadro-secundario-primero {
+  margin-top: 32px;
+}
+
+.usuario-editar-cuadro-secundario-segundo {
+  margin-top: 10px;
+}
 /* ====== ESTILOS PARA EDITAR_USUARIO (AISLADOS) ====== */
 .usuario-editar-bg {
   width: 100vw;
@@ -58,7 +268,7 @@
 .usuario-editar-fecha-prestamo {
   display: flex;
   width: 207px;
-  height: 34px;
+  padding: 0px 81px 28px 81px;
   flex-direction: column;
   justify-content: center;
   flex-shrink: 0;
@@ -77,6 +287,7 @@
   flex-shrink: 0;
   border-radius: 10px;
   background: #2F5233;
+  margin: -10px auto 0 auto;
 }
 .usuario-editar-barra-progreso-secundaria {
   width: 278.182px;
@@ -468,6 +679,8 @@
   font-family: 'League Spartan', sans-serif;
   color: #453726;
   padding-left: 8px;
+  border-radius: 20px;
+  box-shadow: none;
 }
 .usuario-search-btn {
   background: none;

@@ -1,12 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   return (
     <aside className="sidebar">
       <div className="hola-bibliotecario">Hola, bibliotecario</div>
       <div className="sidebar-divider" />
-      <div className="menu-item menu-inicio">
+      <div className="menu-item menu-inicio" onClick={() => navigate('/Inicio')} style={{ cursor: 'pointer' }}>
         <svg className="sidebar-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" fill="none">
           <path d="M14.1666 25.5V20.4167C14.1666 19.3121 15.0621 18.4167 16.1666 18.4167H17.8333C18.9379 18.4167 19.8333 19.3121 19.8333 20.4167V25.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M2.83337 11.3333L16.7317 4.38417C16.9006 4.29971 17.0995 4.29971 17.2684 4.38417L31.1667 11.3333" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

@@ -1,0 +1,94 @@
+/* Overlay oscuro para el fondo */
+.cuadro-dialogo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(69, 55, 38, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.cuadro-dialogo-bg {
+  position: relative;
+  z-index: 1001;
+}
+/* Cuadro de diálogo principal */
+.cuadro-dialogo-bg {
+  display: flex;
+  width: 465px;
+  padding: 33px 44px;
+  flex-direction: column;
+  align-items: center;
+  gap: 88px;
+  border-radius: 10px;
+  background: rgba(225, 197, 171, 0.90);
+  box-shadow: 0px 4px 16px rgba(0,0,0,0.10);
+}
+
+.cuadro-dialogo-titulo {
+  font-size: 28px;
+  font-family: 'League Spartan', sans-serif;
+  color: #453726;
+  font-weight: 700;
+  margin-bottom: 0px;
+  text-align: center;
+}
+
+.cuadro-dialogo-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+}
+
+.cuadro-dialogo-search-bar {
+  margin-top: -24px;
+  display: flex;
+  width: 100%;
+  max-width: 370px;
+  height: 56px;
+  align-items: center;
+  gap: 4px;
+  border-radius: 28px;
+  background: #F3EDF7;
+  padding: 0 16px;
+}
+.cuadro-dialogo-input {
+  flex: 1;
+  height: 40px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 18px;
+  font-family: 'League Spartan', sans-serif;
+  color: #453726;
+  padding-left: 8px;
+}
+.cuadro-dialogo-search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  height: 40px;
+}
+.cuadro-dialogo-siguiente-btn {
+  background: #2F5233;
+  color: #fff;
+  font-size: 18px;
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 32px;
+  cursor: pointer;
+  box-shadow: 0px 1px 3px 1px rgba(0,0,0,0.15);
+  margin-top: 8px;
+}

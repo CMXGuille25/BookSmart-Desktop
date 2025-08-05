@@ -10,6 +10,10 @@ const CameraStream = () => {
   const bibliotecaId = localStorage.getItem('biblioteca');
   const [isStreaming, setIsStreaming] = useState(false);
   const [faceDetected, setFaceDetected] = useState(false);
+  
+  // Add cooldown state to prevent too many captures
+  const lastCaptureTime = useRef(0);
+  const CAPTURE_COOLDOWN = 3000; // 3 seconds between captures
 
   // Function to capture current frame and send to API
   const captureAndSendFrame = async () => {
@@ -47,28 +51,50 @@ const CameraStream = () => {
           return;
         }
 
-        // Create FormData to send image and bibliotecaId
+        // Create FormData to send image and biblioteca_id
         const formData = new FormData();
-        formData.append('image', blob, 'capture.jpg');
-        formData.append('bibliotecaId', bibliotecaId);
+        formData.append('imagen', blob, 'capture.jpg'); // Changed from 'image' to 'imagen'
+        formData.append('biblioteca_id', parseInt(bibliotecaId)); // Changed from 'bibliotecaId' to 'biblioteca_id' and convert to int
+        
+        // Optional: Add tolerance parameter (defaults to 0.6 in API)
+        formData.append('tolerance', '0.6');
 
         try {
           console.log("📤 Sending capture to API...", {
-            bibliotecaId: bibliotecaId,
+            biblioteca_id: bibliotecaId,
             imageSize: blob.size,
             imageType: blob.type
           });
 
-          const response = await fetch('/api/your-endpoint', { // Replace with your actual API endpoint
+          const response = await fetch('/api/v1/rostro/verificar', {
             method: 'POST',
-            body: formData
+            body: formData // Don't add Content-Type header - let browser set it for FormData
           });
 
           if (response.ok) {
             const result = await response.json();
             console.log("✅ Capture sent successfully:", result);
+            
+            // Handle the response based on the API structure
+            if (result.match_found) {
+              console.log("🎯 Face match found:", {
+                user_id: result.match_info?.user_id,
+                confidence: result.match_info?.confidence,
+                message: result.message
+              });
+            } else {
+              console.log("❌ No face match:", result.message);
+            }
+            
+            console.log("📷 Photo saved:", {
+              s3_url: result.s3_url,
+              historial_id: result.historial_id,
+              deteccion_id: result.deteccion_id
+            });
+            
           } else {
-            console.error("❌ API error:", response.status, response.statusText);
+            const errorText = await response.text();
+            console.error("❌ API error:", response.status, response.statusText, errorText);
           }
         } catch (apiError) {
           console.error("❌ Network error sending capture:", apiError);
@@ -155,10 +181,22 @@ const CameraStream = () => {
 
       setFaceDetected(hasFace);
       
+      // Check if we should capture (new face detected + cooldown expired)
+      const currentTime = Date.now();
+      const timeSinceLastCapture = currentTime - lastCaptureTime.current;
+      
       if (hasFace && !faceDetected) {
         console.log("✅ New face detected!");
-        // Automatically capture and send when a new face is detected
-        captureAndSendFrame();
+        
+        // Only capture if cooldown period has passed
+        if (timeSinceLastCapture >= CAPTURE_COOLDOWN) {
+          console.log("📸 Capturing photo (cooldown expired)...");
+          lastCaptureTime.current = currentTime;
+          captureAndSendFrame();
+        } else {
+          const remainingCooldown = Math.ceil((CAPTURE_COOLDOWN - timeSinceLastCapture) / 1000);
+          console.log(`⏳ Capture on cooldown (${remainingCooldown}s remaining)`);
+        }
       }
 
       // Continue detection loop at ~15 FPS (67ms delay)

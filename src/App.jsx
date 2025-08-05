@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import CameraStream from './Componentes/CamaraStream.jsx';
 import WebCamaraManager from './Componentes/WebManager.jsx';
 import Confirmar_Prestamo from './Detalle_Prestamo/Confirmar_Prestamo.jsx';
@@ -67,6 +67,8 @@ function App() {
       )}
 
       <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/Usuarios" element={<Buscar_Usuarios />} />
         <Route path="/Editar_Usuario" element={<Editar_Usuario />} />

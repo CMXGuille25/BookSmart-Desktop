@@ -21,13 +21,13 @@ const ConfirmLogin = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch('http://localhost:3333/api/auth/verify', {
+      const response = await fetch('/api/auth/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-Client-Type': 'desktop',
         },
-        body: JSON.stringify({ '2fa': code }),
+        body: JSON.stringify({ '2fa': code, "user_id": pendingUser.id }),
       });
       const data = await response.json();
       if (response.status === 200 && data.data && data.data.token) {

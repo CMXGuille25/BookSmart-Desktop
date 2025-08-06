@@ -51,7 +51,7 @@ const Inicio = () => {
             <div className="prestamo-card" key={i}>
               <div className="card-icon">{cardIcon}</div>
               <div className="card-info">
-                <div className="libro-titulo">Titulo del libro</div>
+                <div className="inicio-titulo-libro">Titulo del libro</div>
                 <div className="libro-autor">Autor:</div>
                 <div className="libro-row">
                   <div className="libro-entrega">Fecha estimada de entrega:</div>

@@ -1,3 +1,33 @@
+.inicio-titulo-libro {
+  display: flex;
+  width: 163.831px;
+  height: 20.302px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #000;
+  font-family: "League Spartan";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 100% */
+  letter-spacing: 0.1px;
+}
+.inicio-titulo-libro {
+  display: flex;
+  width: 163.831px;
+  height: 20.302px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #000;
+  font-family: "League Spartan";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 100% */
+  letter-spacing: 0.1px;
+}
 /* Icono del libro vacío para las tarjetas de préstamo */
 .card-icon-img {
   width: 94.862px;

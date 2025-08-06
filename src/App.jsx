@@ -11,6 +11,7 @@ import Login from './Login/Login.jsx';
 import Buscar_Libros from './Nuevo_Préstamo/Buscar_Libros.jsx';
 import Buscar_Usuarios from './Usuario/Buscar_Usuarios.jsx';
 import Editar_Usuario from './Usuario/Editar_Usuario.jsx';
+import Registrar_Usuario from './Usuario/Registrar_Usuario.jsx';
 
 function App() {
   const [isCameraConnected, setIsCameraConnected] = useState(false);
@@ -78,6 +79,7 @@ function App() {
         <Route path="/Escanear_Tarjeta_Usuario" element={<Escanear_Tarjeta_Usuario />} />
         <Route path="/Buscar_Libros" element={<Buscar_Libros />} />
         <Route path="/Confirmar_Prestamo" element={<Confirmar_Prestamo />} />
+        <Route path="/Registrar_Usuario" element={<Registrar_Usuario />} />
       </Routes>
     </BrowserRouter>
   );

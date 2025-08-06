@@ -27,7 +27,7 @@ const ConfirmLogin = () => {
           'Content-Type': 'application/json',
           'X-Client-Type': 'desktop',
         },
-        body: JSON.stringify({ '2fa': code, "user_id": pendingUser.id }),
+        body: JSON.stringify({ '2fa': code, user_id: pendingUser.id }), // 👈 CORREGIDO
       });
       const data = await response.json();
       if (response.status === 200 && data.data && data.data.token) {

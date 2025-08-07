@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import PantallaTransicion from '../Componentes/PantallaTransicion/PantallaTransicion';
+import logo1 from '../assets/logo1.png';
 import './Detalle_Prestamo.css';
 import Sidebar from '../Componentes/Sidebar/Sidebar.jsx';
 
 const DetallePrestamo = () => {
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const navigate = useNavigate();
+  const handleGuardar = () => {
+    setMostrarModal(true);
+    setTimeout(() => {
+      setMostrarModal(false);
+      navigate('/Inicio');
+    }, 1000);
+  };
   return (
     <div className="detalle-bg">
       <Sidebar />
@@ -51,7 +63,14 @@ const DetallePrestamo = () => {
                 <div style={{ width: '7px' }}></div>
                 <div className="barra-progreso-secundaria"></div>
               </div>
-            <button className="guardar-cambios-btn">Guardar cambios</button>
+            <button className="guardar-cambios-btn" onClick={handleGuardar}>Guardar cambios</button>
+            {mostrarModal && (
+              <PantallaTransicion
+                icono={logo1}
+                soloIcono={true}
+                onClose={() => setMostrarModal(false)}
+              />
+            )}
             </div>
           </div>
           <div className="detalle-card-secundario">

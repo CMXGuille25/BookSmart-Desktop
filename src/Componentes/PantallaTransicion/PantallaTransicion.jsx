@@ -14,7 +14,9 @@ const PantallaTransicion = ({ mensaje, onClose, boton = 'Cerrar', icono = null, 
         {!soloIcono && (
           <>
             <div className="pantalla-transicion-mensaje">{mensaje}</div>
-            <button className="pantalla-transicion-boton" onClick={onClose}>{boton}</button>
+            {boton && (
+              <button className="pantalla-transicion-boton" onClick={onClose}>{boton}</button>
+            )}
           </>
         )}
       </div>

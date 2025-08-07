@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Detalle_Prestamo.css';
 import Sidebar from '../Componentes/Sidebar/Sidebar.jsx';
 import PrestamoCancelado from '../Componentes/Modal_Prestamos/Prestamo_Cancelado.jsx';
 import PrestamoExitoso from '../Componentes/Modal_Prestamos/prestamo_Exitoso.jsx';
 
+
 const DetallePrestamo = () => {
   const [modal, setModal] = useState(null);
+  const navigate = useNavigate();
 
   const handleCancelar = () => setModal('cancelado');
   const handleFinalizar = () => setModal('exitoso');
-  const handleCloseModal = () => setModal(null);
+  const handleCloseModal = () => {
+    setModal(null);
+    navigate('/Inicio');
+  };
 
   return (
     <div className="detalle-bg">

@@ -28,11 +28,15 @@ const Escanear_Tarjeta_Usuario = () => {
           </svg>
         </div>
             <div className="escanear-tarjeta-card">
-              <div className="escanear-tarjeta-titulo">Escanea la tarjeta del<br />usuario</div>
+              <div className="escanear-tarjeta-titulo">A continuación, valide los <br /> datos del usuario por medio <br /> de su huella digital</div>
               <div className="escanear-tarjeta-svg-card" onClick={handleScanCard} style={{cursor: 'pointer'}}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150" fill="none">
-                  <path d="M137.5 56.25V33.25C137.5 32.1454 136.605 31.25 135.5 31.25H14.5C13.3954 31.25 12.5 32.1454 12.5 33.25V116.75C12.5 117.855 13.3954 118.75 14.5 118.75H87.5M137.5 56.25H37.5M137.5 56.25V81.25" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M132.292 115.625H136.9C137.231 115.625 137.5 115.894 137.5 116.225V136.9C137.5 137.231 137.231 137.5 136.9 137.5H106.85C106.519 137.5 106.25 137.231 106.25 136.9V116.225C106.25 115.894 106.519 115.625 106.85 115.625H111.458M132.292 115.625V104.688C132.292 101.042 130.208 93.75 121.875 93.75C113.542 93.75 111.458 101.042 111.458 104.688V115.625M132.292 115.625H111.458" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+               <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150" fill="none">
+                    <path d="M43.75 100V71.0096C43.75 67.8236 44.3766 64.7652 45.5282 61.9231M106.25 100V80.0962M57.6389 48.3404C62.6045 45.4409 68.5759 43.75 75 43.75C89.2469 43.75 101.267 52.0664 105.029 63.4375" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M62.5 106.25V92.6471M87.5 106.25V74.0809C87.5 67.6849 81.9036 62.5 75 62.5C68.0964 62.5 62.5 67.6849 62.5 74.0809V79.0441" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M37.5 18.75H18.75V37.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M112.5 18.75H131.25V37.5" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M37.5 131.25H18.75V112.5" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M112.5 131.25H131.25V112.5" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </div>
               <button
@@ -41,7 +45,7 @@ const Escanear_Tarjeta_Usuario = () => {
                   setMostrarModal(true);
                   setTimeout(() => {
                     setMostrarModal(false);
-                    navigate('/Escanear_Huella_Usuario');
+                    navigate('/Confirmar_Prestamo');
                   }, 1000);
                 }}
               >

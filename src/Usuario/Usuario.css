@@ -1,3 +1,24 @@
+/* Botón Registrar en EditarUsuario: estilos personalizados */
+.usuario-editar-registrar-btn {
+  display: flex;
+  width: 145px;
+  height: 38px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  background: #2F5232;
+  color: #FFF;
+  border-radius: 8px;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.30), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  margin: 18px auto 0 auto;
+  text-align: center;
+  transition: background 0.2s;
+}
 .usuario-registrar-cuadro-pequeno .usuario-registrar-btn {
   background: #2F5232 !important;
   color: #FFF !important;
@@ -517,7 +538,8 @@
   justify-content: center;
   pointer-events: none;
 }
-/* Importar League Spartan desde Google Fonts */
+
+/* ===== IMPORTS ===== */
 @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;500;700&display=swap');
 
 /* Aplicar League Spartan a toda la pantalla de Buscar Usuarios */

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import libroVacio from '../assets/Libro_vacio.png';
 import './Inicio.css';
 import Sidebar from '../Componentes/Sidebar/Sidebar.jsx';
@@ -24,6 +25,7 @@ const cardIcon = (
 
 
 const Inicio = () => {
+  const navigate = useNavigate();
   return (
     <div className="inicio-bg">
       <Sidebar />
@@ -31,7 +33,7 @@ const Inicio = () => {
         <h1 className="prestamos-title">Préstamos</h1>
         <div className="prestamos-desc-row">
           <div className="prestamos-desc">Administra los préstamos de la biblioteca en este espacio.</div>
-          <button className="nuevo-prestamo">
+          <button className="nuevo-prestamo" onClick={() => navigate('/Buscar_Libros')}>
             Nuevo préstamo
             <svg className="nuevo-prestamo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 12" fill="none">
               <path d="M3.66675 6H5.50008M7.33341 6H5.50008M5.50008 6V4M5.50008 6V8" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -62,7 +64,7 @@ const Inicio = () => {
                   <div className="libro-usuario">Usuario No.1</div>
                 </div>
               </div>
-              <button className="editar-btn">
+              <button className="editar-btn" onClick={() => navigate('/Detalle_Prestamo')}>
                 <span className="editar-btn-text">Editar</span>
                 <svg className="editar-btn-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 22" fill="none">
                   <path d="M2.83325 19.25L11.3333 19.25H19.8333" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

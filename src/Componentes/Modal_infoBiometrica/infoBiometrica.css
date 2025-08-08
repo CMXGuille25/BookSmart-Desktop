@@ -1,0 +1,79 @@
+.modal-info-biometrica-iniciar-btn-text {
+  color: #FFF;
+  font-family: "League Spartan";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  width: 100%;
+  text-align: center;
+  display: block;
+}
+.modal-info-biometrica-iniciar-btn {
+  display: flex;
+  width: 145px;
+  height: 38px;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #2F5232;
+  color: #FFF;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.30), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  margin: 0 auto;
+  text-align: center;
+  transition: background 0.2s;
+  margin-top: -20px;
+}
+.modal-info-biometrica-cuadro-marron {
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+  background: #A47149;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.modal-info-biometrica-titulo {
+  align-self: stretch;
+  color: #453726;
+  text-align: center;
+  font-family: "League Spartan";
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px; /* 62.5% */
+  letter-spacing: 0.1px;
+}
+.modal-info-biometrica-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  background: rgba(0,0,0,0.15);
+}
+.modal-info-biometrica {
+  display: flex;
+  width: 465px;
+  height: 383px;
+  padding: 33px 44px;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(225, 197, 171, 0.90);
+}

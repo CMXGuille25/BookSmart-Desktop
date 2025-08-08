@@ -185,7 +185,7 @@ const Buscar_Libros = () => {
                 setMostrarModal(true);
                 setTimeout(() => {
                   setMostrarModal(false);
-                  navigate('/detalle-prestamo');
+                  navigate('/Escanear_Tarjeta_Usuario');
                 }, 1000);
               } else {
                 setAlerta({ tipo: 'error', mensaje: 'Selecciona un libro antes de continuar.' });

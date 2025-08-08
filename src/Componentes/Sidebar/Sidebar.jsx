@@ -6,7 +6,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   return (
     <aside className="sidebar">
-      <div className="hola-bibliotecario">Hola, bibliotecario</div>
+      <div className="hola-bibliotecario">Hola, <br/>bibliotecario</div>
       <div className="sidebar-divider" />
       <div className="menu-item menu-inicio" onClick={() => navigate('/Inicio')} style={{ cursor: 'pointer' }}>
         <svg className="sidebar-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" fill="none">
@@ -23,7 +23,7 @@ const Sidebar = () => {
         </svg>
         <span>Usuarios</span>
       </div>
-      <div className="menu-item menu-cambiar">
+      <div className="menu-item menu-cambiar" onClick={() => navigate('/Cambiar_Contraseña')} style={{ cursor: 'pointer' }}>
         <svg className="sidebar-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" fill="none">
           <path d="M17 21.25C19.3472 21.25 21.25 19.3472 21.25 17C21.25 14.6528 19.3472 12.75 17 12.75C14.6528 12.75 12.75 14.6528 12.75 17C12.75 19.3472 14.6528 21.25 17 21.25Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M27.7984 14.7268L26.2434 10.9718L28.3334 8.49998L25.5 5.66665L23.0417 7.7675L19.2069 6.19044L18.3251 2.83331H15.5564L14.6612 6.23491L10.9146 7.81426L8.50004 5.66665L5.66671 8.49998L7.72564 11.0342L6.19442 14.7989L2.83337 15.5833V18.4166L6.23495 19.3453L7.81402 23.0913L5.66671 25.5L8.50004 28.3333L11.0375 26.2654L14.7291 27.7841L15.5834 31.1666H18.4167L19.2731 27.7853L23.0281 26.2303C23.6539 26.6777 25.5 28.3333 25.5 28.3333L28.3334 25.5L26.2309 23.02L27.7864 19.2638L31.1665 18.3843L31.1667 15.5833L27.7984 14.7268Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

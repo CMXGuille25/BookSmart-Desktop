@@ -8,13 +8,13 @@ export default defineConfig({
         proxy: {
             // API de autenticación
             "/api/auth": {
-                target: "http://localhost:49357",
+                target: "http://localhost:3333",
                 changeOrigin: true,
                 secure: false,
             },
             // API de business
             "/api/business": {
-                target: "http://localhost:3333", // o el puerto que uses para business
+                target: "http://localhost:50383", // o el puerto que uses para business
                 changeOrigin: true,
                 secure: false,
             },

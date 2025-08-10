@@ -11,6 +11,7 @@ import Inicio from './Inicio/Inicio.jsx';
 import ConfirmarLogin from './Login/ConfirmarLogin.jsx';
 import Login from './Login/Login.jsx';
 import Buscar_Libros from './Nuevo_Préstamo/Buscar_Libros.jsx';
+import BuscarUsuarioEmail from './Usuario/Buscar_Usuario_Correo.jsx';
 import Buscar_Usuarios from './Usuario/Buscar_Usuarios.jsx';
 import Editar_Usuario from './Usuario/Editar_Usuario.jsx';
 import Registrar_Usuario from './Usuario/Registrar_Usuario.jsx';
@@ -83,6 +84,7 @@ function App() {
         <Route path="/Registrar_Usuario" element={<Registrar_Usuario />} />
         <Route path="/Escanear_Huella_Usuario" element={<Escanear_Huella_Usuario />} />
         <Route path="/Cambiar_Contraseña" element={<CambiarContraseña />} />
+        <Route path="/Buscar_Usuario_Email" element={<BuscarUsuarioEmail />} />
       </Routes>
     </BrowserRouter>
   );

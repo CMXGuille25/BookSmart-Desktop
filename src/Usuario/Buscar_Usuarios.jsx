@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 // import BuscarCorreo from '../Componentes/Cuadro_Dialogo/Buscar_Correo.jsx';
 import { useNavigate } from 'react-router-dom';
 import BuscarCorreo from '../Componentes/Cuadro_Dialogo/Buscar_Correo.jsx';
-import libroVacio from '../assets/Libro_vacio.png';
-import './Usuario.css';
 import Sidebar from '../Componentes/Sidebar/Sidebar.jsx';
+import './Usuario.css';
 
 const menuIcons = {
   inicio: (
@@ -55,7 +54,7 @@ const Inicio = () => {
 
   // Handler para el botón Nuevo usuario
   const handleNuevoUsuarioClick = () => {
-    navigate('/Registrar_Usuario');
+    navigate('/Buscar_Usuario_Email'); // Changed to go to email search first
   };
 
   // Handler para buscar por correo y mostrar modal si no se encuentra
@@ -152,5 +151,3 @@ const Inicio = () => {
 };
 
 export default Inicio;
-
-// ...existing code...

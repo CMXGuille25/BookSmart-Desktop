@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import CambiarContraseña from './Cambiar_Contraseña/CambiarContraseña.jsx';
 import CameraStream from './Componentes/CamaraStream.jsx';
+import ProtectedRoute from './Componentes/ProtectedRoute.jsx';
 import WebCamaraManager from './Componentes/WebManager.jsx';
 import Confirmar_Prestamo from './Detalle_Prestamo/Confirmar_Prestamo.jsx';
 import Detalle_Prestamo from './Detalle_Prestamo/Detalle_Prestamo.jsx';
@@ -15,7 +16,6 @@ import BuscarUsuarioEmail from './Usuario/Buscar_Usuario_Correo.jsx';
 import Buscar_Usuarios from './Usuario/Buscar_Usuarios.jsx';
 import Editar_Usuario from './Usuario/Editar_Usuario.jsx';
 import Registrar_Usuario from './Usuario/Registrar_Usuario.jsx';
-
 
 function App() {
   const [isCameraConnected, setIsCameraConnected] = useState(false);
@@ -72,19 +72,76 @@ function App() {
       )}
 
       <Routes>
-        <Route path="/" element={<Login   />} />
-        <Route path="/Usuarios" element={<Buscar_Usuarios />} />
-        <Route path="/Editar_Usuario" element={<Editar_Usuario />} />
+        {/* Public routes - no authentication required */}
+        <Route path="/" element={<Login />} />
         <Route path="/ConfirmarLogin" element={<ConfirmarLogin />} />
-        <Route path="/Inicio" element={<Inicio />} />
-        <Route path="/Detalle_Prestamo" element={<Detalle_Prestamo />} />
-        <Route path="/Escanear_Tarjeta_Usuario" element={<Escanear_Tarjeta_Usuario />} />
-        <Route path="/Buscar_Libros" element={<Buscar_Libros />} />
-        <Route path="/Confirmar_Prestamo" element={<Confirmar_Prestamo />} />
-        <Route path="/Registrar_Usuario" element={<Registrar_Usuario />} />
-        <Route path="/Escanear_Huella_Usuario" element={<Escanear_Huella_Usuario />} />
-        <Route path="/Cambiar_Contraseña" element={<CambiarContraseña />} />
-        <Route path="/Buscar_Usuario_Email" element={<BuscarUsuarioEmail />} />
+        
+        {/* Protected routes - authentication required */}
+        <Route path="/Inicio" element={
+          <ProtectedRoute>
+            <Inicio />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/Usuarios" element={
+          <ProtectedRoute>
+            <Buscar_Usuarios />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/Editar_Usuario" element={
+          <ProtectedRoute>
+            <Editar_Usuario />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/Detalle_Prestamo" element={
+          <ProtectedRoute>
+            <Detalle_Prestamo />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/Escanear_Tarjeta_Usuario" element={
+          <ProtectedRoute>
+            <Escanear_Tarjeta_Usuario />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/Buscar_Libros" element={
+          <ProtectedRoute>
+            <Buscar_Libros />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/Confirmar_Prestamo" element={
+          <ProtectedRoute>
+            <Confirmar_Prestamo />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/Registrar_Usuario" element={
+          <ProtectedRoute>
+            <Registrar_Usuario />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/Escanear_Huella_Usuario" element={
+          <ProtectedRoute>
+            <Escanear_Huella_Usuario />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/Cambiar_Contraseña" element={
+          <ProtectedRoute>
+            <CambiarContraseña />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/Buscar_Usuario_Email" element={
+          <ProtectedRoute>
+            <BuscarUsuarioEmail />
+          </ProtectedRoute>
+        } />
       </Routes>
     </BrowserRouter>
   );

@@ -6,6 +6,7 @@ import ModalEscanearTarjeta from '../Componentes/Modal_InfoBiometrica/ModalEscan
 import PantallaTransicion from '../Componentes/PantallaTransicion/PantallaTransicion.jsx';
 import Sidebar from '../Componentes/Sidebar/Sidebar.jsx';
 import logo1 from '../assets/logo1.png';
+import { fetchWithAuth } from '../utils/auth.js';
 import './Usuario.css';
 
 const RegistrarUsuario = () => {
@@ -14,6 +15,9 @@ const RegistrarUsuario = () => {
   // Get user data from localStorage (set by search page)
   const usuarioTemp = JSON.parse(localStorage.getItem('usuario_registro_temp') || '{}');
   const usuarioId = usuarioTemp.id || localStorage.getItem('usuario_id') || localStorage.getItem('user_id');
+  
+  // Get biblioteca_id from localStorage
+  const bibliotecaId = localStorage.getItem('biblioteca');
 
   // If no user data found, redirect back to search
   if (!usuarioTemp.id) {
@@ -45,20 +49,34 @@ const RegistrarUsuario = () => {
   // Habilitar botón solo si los tres están registrados
   const registroCompleto = rostroRegistrado && huellaRegistrada && tarjetaRegistrada;
 
-  // API Functions
+  // Function to split email at @ symbol
+  const splitEmailAtSymbol = (email) => {
+    if (!email || !email.includes('@')) return { part1: email || '', part2: '' };
+    const [part1, part2] = email.split('@');
+    return { part1: part1 + '@', part2: part2 };
+  };
+
+  // Function to check if text is too long for inline display
+  const isTextTooLong = (text, maxLength = 20) => {
+    return text && text.length > maxLength;
+  };
+
+  // API Functions - Updated to include biblioteca_id
   const registrarRostro = async (imagenBase64) => {
     try {
       setLoading(prev => ({ ...prev, rostro: true }));
       setErrors(prev => ({ ...prev, rostro: '' }));
 
-      const response = await fetch('/api/business/registrar-rostro', {
+      // Validate required data
+      if (!bibliotecaId) {
+        throw new Error('ID de biblioteca no encontrado. Por favor inicia sesión nuevamente.');
+      }
+
+      const response = await fetchWithAuth('/api/business/registrar-rostro', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`, // Si necesitas autenticación
-        },
         body: JSON.stringify({
           usuario_id: parseInt(usuarioId),
+          biblioteca_id: parseInt(bibliotecaId),
           imagen: imagenBase64
         })
       });
@@ -86,14 +104,16 @@ const RegistrarUsuario = () => {
       setLoading(prev => ({ ...prev, huella: true }));
       setErrors(prev => ({ ...prev, huella: '' }));
 
-      const response = await fetch('/api/business/detectar-huella', {
+      // Validate required data
+      if (!bibliotecaId) {
+        throw new Error('ID de biblioteca no encontrado. Por favor inicia sesión nuevamente.');
+      }
+
+      const response = await fetchWithAuth('/api/business/detectar-huella', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
         body: JSON.stringify({
-          usuario_id: parseInt(usuarioId)
+          usuario_id: parseInt(usuarioId),
+          biblioteca_id: parseInt(bibliotecaId)
         })
       });
 
@@ -120,14 +140,16 @@ const RegistrarUsuario = () => {
       setLoading(prev => ({ ...prev, tarjeta: true }));
       setErrors(prev => ({ ...prev, tarjeta: '' }));
 
-      const response = await fetch('/api/business/registrar-rfid', {
+      // Validate required data
+      if (!bibliotecaId) {
+        throw new Error('ID de biblioteca no encontrado. Por favor inicia sesión nuevamente.');
+      }
+
+      const response = await fetchWithAuth('/api/business/registrar-rfid', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
         body: JSON.stringify({
-          usuario_id: parseInt(usuarioId)
+          usuario_id: parseInt(usuarioId),
+          biblioteca_id: parseInt(bibliotecaId)
         })
       });
 
@@ -160,7 +182,6 @@ const RegistrarUsuario = () => {
     if (registrado && imagenBase64) {
       const result = await registrarRostro(imagenBase64);
       if (!result.success) {
-        // Mostrar error al usuario
         alert(`Error al registrar rostro: ${result.error}`);
       }
     }
@@ -171,7 +192,6 @@ const RegistrarUsuario = () => {
     if (registrado) {
       const result = await registrarHuella();
       if (!result.success) {
-        // Mostrar error al usuario
         alert(`Error al registrar huella: ${result.error}`);
       }
     }
@@ -182,11 +202,64 @@ const RegistrarUsuario = () => {
     if (registrado) {
       const result = await registrarTarjeta();
       if (!result.success) {
-        // Mostrar error al usuario
         alert(`Error al registrar tarjeta: ${result.error}`);
       }
     }
   };
+
+  // Split email for display
+  const { part1: emailPart1, part2: emailPart2 } = splitEmailAtSymbol(usuarioTemp.email);
+
+  // Add early validation for required data
+  if (!bibliotecaId) {
+    return (
+      <div className="usuario-editar-bg">
+        <Sidebar />
+        <main className="main-content">
+          <h1 className="prestamos-title">Usuarios</h1>
+          <hr className="prestamos-divider" />
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '400px',
+            flexDirection: 'column',
+            gap: '20px'
+          }}>
+            <div style={{ 
+              color: '#dc2626', 
+              fontSize: '18px', 
+              fontWeight: '500',
+              textAlign: 'center'
+            }}>
+              ⚠️ Datos de sesión incompletos
+            </div>
+            <div style={{ 
+              color: '#6b7280', 
+              fontSize: '14px',
+              textAlign: 'center'
+            }}>
+              No se encontró el ID de biblioteca. Por favor inicia sesión nuevamente.
+            </div>
+            <button 
+              onClick={() => navigate('/Inicio')}
+              style={{
+                backgroundColor: '#3B82F6',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              Ir al inicio de sesión
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="usuario-editar-bg">
@@ -198,28 +271,56 @@ const RegistrarUsuario = () => {
           <div className="usuario-editar-card" style={{ height: '580px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
               <div className="usuario-editar-libro-imagen usuario-editar-libro-imagen-top"></div>
+              
+              {/* Info card with email split at @ */}
               <div className="usuario-editar-info-card">
+                {/* Nombre - Normal layout */}
                 <div className="usuario-editar-info-row">
                   <span className="usuario-editar-info-label">Nombre:</span>
                   <span className="usuario-editar-info-value">{usuarioTemp.nombre}</span>
                 </div>
+
+                {/* Apellidos - Normal layout */}
                 <div className="usuario-editar-info-row">
                   <span className="usuario-editar-info-label">Apellidos:</span>
                   <span className="usuario-editar-info-value">{usuarioTemp.apellido}</span>
                 </div>
-                <div className="usuario-editar-info-row">
+
+                {/* Correo - Split at @ symbol */}
+                <div className="usuario-editar-info-row usuario-editar-info-row-stacked">
                   <span className="usuario-editar-info-label">Correo:</span>
-                  <span className="usuario-editar-info-value">{usuarioTemp.email}</span>
+                  <div className="usuario-editar-info-value" style={{
+                    fontSize: '13px',
+                    lineHeight: '1.2',
+                    marginTop: '4px'
+                  }}>
+                    <div>{emailPart1}</div>
+                    <div>{emailPart2}</div>
+                  </div>
                 </div>
-                <div className="usuario-editar-info-row">
+
+                {/* Teléfono - Adaptive layout */}
+                <div className={`usuario-editar-info-row ${isTextTooLong(usuarioTemp.telefono, 15) ? 'usuario-editar-info-row-stacked' : ''}`}>
                   <span className="usuario-editar-info-label">Teléfono:</span>
-                  <span className="usuario-editar-info-value">{usuarioTemp.telefono || 'No especificado'}</span>
+                  <span 
+                    className="usuario-editar-info-value"
+                    style={isTextTooLong(usuarioTemp.telefono, 15) ? {
+                      fontSize: '14px',
+                      wordBreak: 'break-all',
+                      marginTop: '4px'
+                    } : {}}
+                  >
+                    {usuarioTemp.telefono || 'No especificado'}
+                  </span>
                 </div>
+
+                {/* Género - Normal layout */}
                 <div className="usuario-editar-info-row">
                   <span className="usuario-editar-info-label">Género:</span>
                   <span className="usuario-editar-info-value">{usuarioTemp.genero || 'No especificado'}</span>
                 </div>
               </div>
+              
               <button
                 className="usuario-finalizar-registro-btn"
                 disabled={!registroCompleto}
@@ -231,12 +332,11 @@ const RegistrarUsuario = () => {
                 }}
                 onClick={() => {
                   if (registroCompleto) {
-                    // Clear temp data
                     localStorage.removeItem('usuario_registro_temp');
                     setTransicion(true);
                     setTimeout(() => {
                       navigate('/Usuarios');
-                    }, 1200); // 1.2 segundos de transición
+                    }, 1200);
                   }
                 }}
               >
@@ -247,10 +347,10 @@ const RegistrarUsuario = () => {
           
           {/* Tres recuadros pequeños uno sobre otro, lado derecho */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', marginLeft: '30px' }}>
+            {/* Subir foto section */}
             <div className="usuario-registrar-cuadro-pequeno usuario-registrar-cuadro-pequeno-primero">
               <div className="usuario-editar-cuadro-titulo">Subir foto</div>
               <div className="usuario-registrar-cuadro-marron">
-                {/* SVG icon */}
                 <svg xmlns="http://www.w3.org/2000/svg" width="79" height="79" viewBox="0 0 79 79" fill="none">
                   <path d="M23.0415 59V46.5C23.0415 42.634 26.1755 39.5 30.0415 39.5H48.9582C52.8242 39.5 55.9582 42.634 55.9582 46.5V59" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
                   <path d="M39.5 39.5C44.9538 39.5 49.375 35.1348 49.375 29.75C49.375 24.3652 44.9538 20 39.5 20C34.0462 20 29.625 24.3652 29.625 29.75C29.625 35.1348 34.0462 39.5 39.5 39.5Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -275,7 +375,6 @@ const RegistrarUsuario = () => {
             <div className="usuario-registrar-cuadro-pequeno usuario-registrar-cuadro-pequeno-segundo">
               <div className="usuario-editar-cuadro-titulo">Huella</div>
               <div className="usuario-registrar-cuadro-marron">
-                {/* SVG icon */}
                 <svg xmlns="http://www.w3.org/2000/svg" width="79" height="81" viewBox="0 0 79 81" fill="none">
                   <path d="M23.0415 53.8332V38.3717C23.0415 36.6725 23.3715 35.0413 23.978 33.5256M55.9582 53.8332V43.2179M30.3563 26.2814C32.9715 24.7351 36.1165 23.8333 39.4998 23.8333C47.0032 23.8333 53.3338 28.2686 55.3149 34.3333" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M32.9165 57.1666V49.9117M46.0832 57.1666V40.0097C46.0832 36.5986 43.1357 33.8333 39.4998 33.8333C35.864 33.8333 32.9165 36.5986 32.9165 40.0097V42.6568" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -303,7 +402,6 @@ const RegistrarUsuario = () => {
             <div className="usuario-registrar-cuadro-pequeno usuario-registrar-cuadro-pequeno-tercero">
               <div className="usuario-editar-cuadro-titulo">Asignar tarjeta</div>
               <div className="usuario-registrar-cuadro-marron">
-                {/* SVG icon */}
                 <svg xmlns="http://www.w3.org/2000/svg" width="79" height="81" viewBox="0 0 79 81" fill="none">
                   <path d="M72.4168 30.5001V19.1667C72.4168 18.0622 71.5214 17.1667 70.4168 17.1667H8.58349C7.47892 17.1667 6.5835 18.0622 6.5835 19.1667V61.8334C6.5835 62.938 7.47893 63.8334 8.5835 63.8334H46.0835M72.4168 30.5001H19.7502M72.4168 30.5001V43.8334" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M69.6738 62.1667H71.8168C72.1482 62.1667 72.4168 62.4353 72.4168 62.7667V73.2333C72.4168 73.5647 72.1482 73.8333 71.8168 73.8333H56.5585C56.2271 73.8333 55.9585 73.5647 55.9585 73.2333V62.7667C55.9585 62.4353 56.2271 62.1667 56.5585 62.1667H58.7016M69.6738 62.1667V56.3333C69.6738 54.3889 68.5766 50.5 64.1877 50.5C59.7988 50.5 58.7016 54.3889 58.7016 56.3333V62.1667M69.6738 62.1667H58.7016" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

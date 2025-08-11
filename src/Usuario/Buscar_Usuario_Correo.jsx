@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../Componentes/Sidebar/Sidebar.jsx';
+import { fetchWithAuth, validateTokenBeforeRequest } from '../utils/auth.js';
 import './Usuario.css';
 
 const BuscarUsuarioEmail = () => {
@@ -18,12 +19,8 @@ const BuscarUsuarioEmail = () => {
       setLoading(true);
       setError('');
 
-      const response = await fetch('/api/business/buscar-usuario-email', {
+      const response = await fetchWithAuth('/api/business/buscar-usuario-email', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
         body: JSON.stringify({
           email: emailBusqueda,
           biblioteca_id: parseInt(bibliotecaId)
@@ -34,8 +31,11 @@ const BuscarUsuarioEmail = () => {
 
       if (response.ok && data.status === 'Usuario encontrado') {
         console.log('✅ Usuario encontrado:', data);
-        setUsuario(data.data);
-        return { success: true, data: data.data };
+        
+        // Extract user data from the correct structure
+        const usuarioData = data.data.usuario;
+        setUsuario(usuarioData);
+        return { success: true, data: usuarioData };
       } else if (response.status === 404) {
         throw new Error('Usuario no encontrado o ya está registrado en esta biblioteca');
       } else if (response.status === 400) {
@@ -55,6 +55,12 @@ const BuscarUsuarioEmail = () => {
 
   const handleBuscar = async (e) => {
     e.preventDefault();
+
+    // Validate token before proceeding
+    if (!validateTokenBeforeRequest()) {
+        return; // This will redirect to login if no token
+    }
+
     if (!email.trim()) {
       setError('Por favor ingrese un correo electrónico');
       return;
@@ -65,7 +71,26 @@ const BuscarUsuarioEmail = () => {
       return;
     }
 
-    await buscarUsuarioPorEmail(email.trim());
+    // Reset previous states
+    setError('');
+    setUsuario(null);
+    setLoading(true);
+
+    try {
+        const resultado = await buscarUsuarioPorEmail(email);
+        // ... rest of your logic
+    } catch (error) {
+        console.error('❌ Error buscando usuario:', error);
+        
+        // Handle auth-specific errors more gracefully
+        if (error.message.includes('authentication') || error.message.includes('token')) {
+            setError('Tu sesión ha expirado. Redirigiendo al inicio de sesión...');
+        } else {
+            setError(error.message || 'Error al buscar usuario');
+        }
+    } finally {
+        setLoading(false);
+    }
   };
 
   const handleProcederRegistro = () => {
@@ -75,9 +100,9 @@ const BuscarUsuarioEmail = () => {
         id: usuario.id,
         nombre: usuario.nombre,
         apellido: usuario.apellido,
-        email: usuario.email,
-        telefono: usuario.telefono,
-        genero: usuario.genero
+        email: usuario.correo, // Note: API returns 'correo' not 'email'
+        telefono: usuario.celular, // Note: API returns 'celular' not 'telefono'
+        genero: usuario.genero || 'No especificado'
       }));
       
       // Navigate to biometric registration
@@ -97,14 +122,13 @@ const BuscarUsuarioEmail = () => {
         <hr className="prestamos-divider" />
         
         <div className="usuario-editar-content-row">
-          <div className="usuario-editar-card" style={{ height: '580px', width: '100%', maxWidth: '600px' }}>
+          <div className="usuario-editar-card" style={{ height: 'auto', minHeight: '400px', width: '100%', maxWidth: '600px' }}>
             <div style={{ 
               display: 'flex', 
               flexDirection: 'column', 
               alignItems: 'center', 
-              height: '100%',
               padding: '40px',
-              gap: '30px'
+              gap: '20px'
             }}>
               
               {/* Search Form */}
@@ -132,7 +156,8 @@ const BuscarUsuarioEmail = () => {
                         borderRadius: '8px',
                         outline: 'none',
                         transition: 'border-color 0.2s',
-                        backgroundColor: loading ? '#f5f5f5' : 'white'
+                        backgroundColor: loading ? '#f5f5f5' : 'white',
+                        color: '#453726'
                       }}
                       onFocus={(e) => e.target.style.borderColor = '#2F5232'}
                       onBlur={(e) => e.target.style.borderColor = '#E0E0E0'}
@@ -165,53 +190,63 @@ const BuscarUsuarioEmail = () => {
                 <div style={{
                   width: '100%',
                   padding: '15px',
-                  backgroundColor: '#FEE',
-                  border: '1px solid #FCC',
+                  backgroundColor: '#FEE2E2',
+                  border: '1px solid #FCA5A5',
                   borderRadius: '8px',
-                  color: '#C33',
-                  textAlign: 'center'
+                  color: '#DC2626',
+                  textAlign: 'center',
+                  fontSize: '14px'
                 }}>
                   {error}
                 </div>
               )}
 
-              {/* User Found */}
+              {/* User Found - Compact Version */}
               {usuario && (
                 <div style={{
                   width: '100%',
-                  padding: '20px',
-                  backgroundColor: '#F0F8F0',
-                  border: '2px solid #2F5232',
-                  borderRadius: '8px',
-                  textAlign: 'center'
+                  marginTop: '10px',
+                  animation: 'slideIn 0.3s ease-out'
                 }}>
-                  <h3 style={{ color: '#2F5232', marginBottom: '15px' }}>
-                    ✅ Usuario Encontrado
-                  </h3>
-                  
-                  <div className="usuario-editar-info-card" style={{ marginBottom: '20px' }}>
-                    <div className="usuario-editar-info-row">
-                      <span className="usuario-editar-info-label">Nombre:</span>
-                      <span className="usuario-editar-info-value">{usuario.nombre}</span>
+                  {/* User Info Card */}
+                  <div style={{
+                    padding: '20px',
+                    backgroundColor: '#F8FAF8',
+                    border: '2px solid #D1E7DD',
+                    borderRadius: '12px',
+                    marginBottom: '20px',
+                    boxShadow: '0 2px 8px rgba(47, 82, 50, 0.1)'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginBottom: '15px',
+                      gap: '8px'
+                    }}>
+                      <span style={{ fontSize: '20px' }}>✅</span>
+                      <h3 style={{ color: '#2F5232', margin: 0, fontSize: '18px' }}>
+                        Usuario Encontrado
+                      </h3>
                     </div>
-                    <div className="usuario-editar-info-row">
-                      <span className="usuario-editar-info-label">Apellidos:</span>
-                      <span className="usuario-editar-info-value">{usuario.apellido}</span>
-                    </div>
-                    <div className="usuario-editar-info-row">
-                      <span className="usuario-editar-info-label">Correo:</span>
-                      <span className="usuario-editar-info-value">{usuario.email}</span>
-                    </div>
-                    <div className="usuario-editar-info-row">
-                      <span className="usuario-editar-info-label">Teléfono:</span>
-                      <span className="usuario-editar-info-value">{usuario.telefono || 'No especificado'}</span>
-                    </div>
-                    <div className="usuario-editar-info-row">
-                      <span className="usuario-editar-info-label">Género:</span>
-                      <span className="usuario-editar-info-value">{usuario.genero || 'No especificado'}</span>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontWeight: '600', color: '#453726' }}>Nombre:</span>
+                        <span style={{ color: '#453726' }}>{usuario.nombre}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontWeight: '600', color: '#453726' }}>Apellidos:</span>
+                        <span style={{ color: '#453726' }}>{usuario.apellido}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontWeight: '600', color: '#453726' }}>Correo:</span>
+                        <span style={{ color: '#453726', fontSize: '14px' }}>{usuario.correo}</span>
+                      </div>
                     </div>
                   </div>
 
+                  {/* Action Button */}
                   <button
                     onClick={handleProcederRegistro}
                     style={{
@@ -224,12 +259,21 @@ const BuscarUsuarioEmail = () => {
                       border: 'none',
                       borderRadius: '8px',
                       cursor: 'pointer',
-                      transition: 'background-color 0.2s'
+                      transition: 'all 0.2s',
+                      boxShadow: '0 2px 4px rgba(47, 82, 50, 0.3)'
                     }}
-                    onMouseOver={(e) => e.target.style.backgroundColor = '#1F3622'}
-                    onMouseOut={(e) => e.target.style.backgroundColor = '#2F5232'}
+                    onMouseOver={(e) => {
+                      e.target.style.backgroundColor = '#1F3622';
+                      e.target.style.transform = 'translateY(-1px)';
+                      e.target.style.boxShadow = '0 4px 8px rgba(47, 82, 50, 0.4)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.backgroundColor = '#2F5232';
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 2px 4px rgba(47, 82, 50, 0.3)';
+                    }}
                   >
-                    Proceder con Registro Biométrico
+                    Proceder con Registro Biométrico →
                   </button>
                 </div>
               )}
@@ -245,7 +289,8 @@ const BuscarUsuarioEmail = () => {
                   border: '2px solid #E0E0E0',
                   borderRadius: '8px',
                   cursor: 'pointer',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
+                  marginTop: usuario ? '10px' : '20px'
                 }}
                 onMouseOver={(e) => {
                   e.target.style.borderColor = '#2F5232';
@@ -263,6 +308,20 @@ const BuscarUsuarioEmail = () => {
           </div>
         </div>
       </main>
+      
+      {/* Add CSS for animation */}
+      <style jsx>{`
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ModalEscanearHuella from '../Componentes/Modal_InfoBiometrica/ModalEscanearHuella.jsx';
 import ModalEscanearRostro from '../Componentes/Modal_InfoBiometrica/ModalEscanearRostro.jsx';
 import ModalEscanearTarjeta from '../Componentes/Modal_InfoBiometrica/ModalEscanearTarjeta.jsx';
+import ModalEscanearHuella from '../Componentes/Modal_infoBiometrica/ModalEscanearHuella.jsx';
 import PantallaTransicion from '../Componentes/PantallaTransicion/PantallaTransicion.jsx';
 import Sidebar from '../Componentes/Sidebar/Sidebar.jsx';
 import logo1 from '../assets/logo1.png';
@@ -38,12 +38,14 @@ const RegistrarUsuario = () => {
   const [loading, setLoading] = useState({
     rostro: false,
     huella: false,
-    tarjeta: false
+    tarjeta: false,
+    finalizando: false
   });
   const [errors, setErrors] = useState({
     rostro: '',
     huella: '',
-    tarjeta: ''
+    tarjeta: '',
+    finalizacion: ''
   });
 
   // Habilitar botón solo si los tres están registrados
@@ -61,7 +63,7 @@ const RegistrarUsuario = () => {
     return text && text.length > maxLength;
   };
 
-  // API Functions - Updated to include biblioteca_id
+  // API Functions - Solo para rostro (las otras se manejan en los modales)
   const registrarRostro = async (imagenBase64) => {
     try {
       setLoading(prev => ({ ...prev, rostro: true }));
@@ -99,75 +101,102 @@ const RegistrarUsuario = () => {
     }
   };
 
-  const registrarHuella = async () => {
+  // Function to verify complete registration and finalize
+  const verificarYFinalizarRegistro = async () => {
     try {
-      setLoading(prev => ({ ...prev, huella: true }));
-      setErrors(prev => ({ ...prev, huella: '' }));
+      setLoading(prev => ({ ...prev, finalizando: true }));
+      setErrors(prev => ({ ...prev, finalizacion: '' }));
 
-      // Validate required data
-      if (!bibliotecaId) {
-        throw new Error('ID de biblioteca no encontrado. Por favor inicia sesión nuevamente.');
-      }
+      console.log('🔍 Verificando registro completo para usuario:', usuarioId);
 
-      const response = await fetchWithAuth('/api/business/detectar-huella', {
-        method: 'POST',
-        body: JSON.stringify({
-          usuario_id: parseInt(usuarioId),
-          biblioteca_id: parseInt(bibliotecaId)
-        })
+      // Call the verification endpoint
+      const response = await fetchWithAuth(`/api/business/verificar-registro-completo/${usuarioId}?biblioteca_id=${bibliotecaId}`, {
+        method: 'GET'
       });
 
       const data = await response.json();
 
-      if (response.ok && data.status === 'Registro exitoso') {
-        console.log('✅ Huella registrada exitosamente:', data);
-        setHuellaRegistrada(true);
-        return { success: true, data };
+      if (response.ok) {
+      console.log('✅ Verificación exitosa:', data);
+
+      // ✅ CORRECCIÓN: Acceder a la estructura correcta de la respuesta
+      const biometricStatus = data.data?.biometric_status;
+      const registroCompleto = biometricStatus?.registro_completo;
+
+      if (registroCompleto) {
+        console.log('✅ Registro biométrico completo, finalizando...');
+        
+        // Update local state based on successful registration
+        setRostroRegistrado(biometricStatus.foto_registrada);
+        setHuellaRegistrada(biometricStatus.huella_registrada);
+        setTarjetaRegistrada(biometricStatus.tarjeta_registrada);
+        
+        // Clear temporary user data
+        localStorage.removeItem('usuario_registro_temp');
+        
+        // Show transition screen
+        setTransicion(true);
+        
+        // Navigate after transition
+        setTimeout(() => {
+          navigate('/Usuarios');
+        }, 1200);
+
       } else {
-        throw new Error(data.msg || 'Error al registrar huella');
+        // Registration is not complete, show specific missing items
+        const missingItems = data.data?.missing_items || [];
+        
+        // ✅ CORRECCIÓN: Actualizar estado local basado en la respuesta real
+        if (biometricStatus) {
+          setRostroRegistrado(biometricStatus.foto_registrada || false);
+          setHuellaRegistrada(biometricStatus.huella_registrada || false);
+          setTarjetaRegistrada(biometricStatus.tarjeta_registrada || false);
+        }
+
+        throw new Error(`Registro incompleto. Faltan: ${missingItems.join(', ')}`);
       }
-    } catch (error) {
-      console.error('❌ Error registrando huella:', error);
-      setErrors(prev => ({ ...prev, huella: error.message }));
-      return { success: false, error: error.message };
-    } finally {
-      setLoading(prev => ({ ...prev, huella: false }));
+
+    } else {
+      // Handle different error codes from backend
+      let errorMessage = data.msg || 'Error al verificar el registro';
+      
+      switch (data.code) {
+        case 'VERIFY_01':
+        case 'VERIFY_01A':
+          errorMessage = 'Datos de usuario o biblioteca inválidos';
+          break;
+        case 'VERIFY_02':
+          errorMessage = 'Usuario no encontrado en el sistema';
+          break;
+        case 'VERIFY_03':
+          errorMessage = 'No se encontraron datos biométricos del usuario';
+          break;
+        case 'VERIFY_04':
+          // This is actually a partial success - update UI state
+          const biometricStatus = data.data?.biometric_status;
+          if (biometricStatus) {
+            setRostroRegistrado(biometricStatus.foto_registrada || false);
+            setHuellaRegistrada(biometricStatus.huella_registrada || false);
+            setTarjetaRegistrada(biometricStatus.tarjeta_registrada || false);
+          }
+          errorMessage = data.msg;
+          break;
+        default:
+          errorMessage = data.msg || 'Error desconocido al verificar el registro';
+      }
+      
+      throw new Error(errorMessage);
     }
-  };
 
-  const registrarTarjeta = async () => {
-    try {
-      setLoading(prev => ({ ...prev, tarjeta: true }));
-      setErrors(prev => ({ ...prev, tarjeta: '' }));
-
-      // Validate required data
-      if (!bibliotecaId) {
-        throw new Error('ID de biblioteca no encontrado. Por favor inicia sesión nuevamente.');
-      }
-
-      const response = await fetchWithAuth('/api/business/registrar-rfid', {
-        method: 'POST',
-        body: JSON.stringify({
-          usuario_id: parseInt(usuarioId),
-          biblioteca_id: parseInt(bibliotecaId)
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.status === 'Registro exitoso') {
-        console.log('✅ Tarjeta registrada exitosamente:', data);
-        setTarjetaRegistrada(true);
-        return { success: true, data };
-      } else {
-        throw new Error(data.msg || 'Error al registrar tarjeta');
-      }
     } catch (error) {
-      console.error('❌ Error registrando tarjeta:', error);
-      setErrors(prev => ({ ...prev, tarjeta: error.message }));
-      return { success: false, error: error.message };
+      console.error('❌ Error verificando registro:', error);
+      setErrors(prev => ({ ...prev, finalizacion: error.message }));
+
+      // Show error alert to user
+      alert(`Error al finalizar registro: ${error.message}`);
+
     } finally {
-      setLoading(prev => ({ ...prev, tarjeta: false }));
+      setLoading(prev => ({ ...prev, finalizando: false }));
     }
   };
 
@@ -176,7 +205,7 @@ const RegistrarUsuario = () => {
   const handleAbrirModalHuella = () => setModalHuellaOpen(true);
   const handleAbrirModalTarjeta = () => setModalTarjetaOpen(true);
 
-  // Handlers para cerrar modales y registrar
+  // ✅ HANDLERS SIMPLIFICADOS - Solo actualizan estado
   const handleCerrarModalRostro = async (registrado, imagenBase64) => {
     setModalRostroOpen(false);
     if (registrado && imagenBase64) {
@@ -187,23 +216,23 @@ const RegistrarUsuario = () => {
     }
   };
 
-  const handleCerrarModalHuella = async (registrado) => {
+  const handleCerrarModalHuella = (registrado) => {
     setModalHuellaOpen(false);
     if (registrado) {
-      const result = await registrarHuella();
-      if (!result.success) {
-        alert(`Error al registrar huella: ${result.error}`);
-      }
+      // ✅ SIMPLIFICADO - Solo actualizar el estado
+      console.log('✅ Huella registrada exitosamente desde el modal');
+      setHuellaRegistrada(true);
+      setErrors(prev => ({ ...prev, huella: '' }));
     }
   };
 
-  const handleCerrarModalTarjeta = async (registrado) => {
+  const handleCerrarModalTarjeta = (registrado) => {
     setModalTarjetaOpen(false);
     if (registrado) {
-      const result = await registrarTarjeta();
-      if (!result.success) {
-        alert(`Error al registrar tarjeta: ${result.error}`);
-      }
+      // ✅ SIMPLIFICADO - Solo actualizar el estado
+      console.log('✅ Tarjeta registrada exitosamente desde el modal');
+      setTarjetaRegistrada(true);
+      setErrors(prev => ({ ...prev, tarjeta: '' }));
     }
   };
 
@@ -321,27 +350,34 @@ const RegistrarUsuario = () => {
                 </div>
               </div>
               
+              {/* Updated Finalizar registro button */}
               <button
                 className="usuario-finalizar-registro-btn"
-                disabled={!registroCompleto}
+                disabled={!registroCompleto || loading.finalizando}
                 style={{
-                  backgroundColor: registroCompleto ? '#2F5232' : '#BDBDBD',
-                  color: registroCompleto ? 'white' : '#757575',
-                  cursor: registroCompleto ? 'pointer' : 'not-allowed',
+                  backgroundColor: !registroCompleto ? '#BDBDBD' : (loading.finalizando ? '#9CA3AF' : '#2F5232'),
+                  color: !registroCompleto ? '#757575' : 'white',
+                  cursor: (!registroCompleto || loading.finalizando) ? 'not-allowed' : 'pointer',
                   transition: 'background 0.2s',
+                  opacity: loading.finalizando ? 0.8 : 1
                 }}
-                onClick={() => {
-                  if (registroCompleto) {
-                    localStorage.removeItem('usuario_registro_temp');
-                    setTransicion(true);
-                    setTimeout(() => {
-                      navigate('/Usuarios');
-                    }, 1200);
-                  }
-                }}
+                onClick={verificarYFinalizarRegistro}
               >
-                Finalizar registro
+                {loading.finalizando ? 'Finalizando...' : 'Finalizar registro'}
               </button>
+
+              {/* Show finalization error if exists */}
+              {errors.finalizacion && (
+                <div style={{
+                  color: '#dc2626',
+                  fontSize: '12px',
+                  marginTop: '5px',
+                  textAlign: 'center',
+                  fontWeight: '500'
+                }}>
+                  {errors.finalizacion}
+                </div>
+              )}
             </div>
           </div>
           
@@ -360,7 +396,7 @@ const RegistrarUsuario = () => {
               <button
                 className="usuario-registrar-btn"
                 style={{ 
-                  backgroundColor: rostroRegistrado ? '#3CB371' : '#3B82F6', 
+                  backgroundColor: rostroRegistrado ? '#3CB371' : '#2F5232', // ✅ CORREGIDO A VERDE
                   color: 'white',
                   opacity: loading.rostro ? 0.7 : 1
                 }}
@@ -387,7 +423,7 @@ const RegistrarUsuario = () => {
               <button
                 className="usuario-registrar-btn"
                 style={{ 
-                  backgroundColor: huellaRegistrada ? '#3CB371' : '#3B82F6', 
+                  backgroundColor: huellaRegistrada ? '#3CB371' : '#2F5232', // ✅ CORREGIDO A VERDE
                   color: 'white',
                   opacity: loading.huella ? 0.7 : 1
                 }}
@@ -410,7 +446,7 @@ const RegistrarUsuario = () => {
               <button
                 className="usuario-registrar-btn"
                 style={{ 
-                  backgroundColor: tarjetaRegistrada ? '#3CB371' : '#3B82F6', 
+                  backgroundColor: tarjetaRegistrada ? '#3CB371' : '#2F5232', // ✅ CORREGIDO A VERDE
                   color: 'white',
                   opacity: loading.tarjeta ? 0.7 : 1
                 }}

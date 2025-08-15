@@ -14,7 +14,7 @@ export default defineConfig({
             },
             // API de business
             "/api/business": {
-                target: "http://localhost:50383", // o el puerto que uses para business
+                target: "http://localhost:57052", // o el puerto que uses para business
                 changeOrigin: true,
                 secure: false,
             },

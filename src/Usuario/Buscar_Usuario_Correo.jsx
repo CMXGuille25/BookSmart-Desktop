@@ -10,6 +10,7 @@ const BuscarUsuarioEmail = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [usuario, setUsuario] = useState(null);
+  const [biometricStatus, setBiometricStatus] = useState(null); // ✅ NUEVO: Estado biométrico
 
   // Get biblioteca_id from localStorage
   const bibliotecaId = localStorage.getItem('biblioteca');
@@ -34,8 +35,12 @@ const BuscarUsuarioEmail = () => {
         
         // Extract user data from the correct structure
         const usuarioData = data.data.usuario;
+        const biometricData = data.data.biometric_status; // ✅ NUEVO: Extraer datos biométricos
+        
         setUsuario(usuarioData);
-        return { success: true, data: usuarioData };
+        setBiometricStatus(biometricData); // ✅ NUEVO: Guardar estado biométrico
+        
+        return { success: true, data: usuarioData, biometric_status: biometricData };
       } else if (response.status === 404) {
         throw new Error('Usuario no encontrado o ya está registrado en esta biblioteca');
       } else if (response.status === 400) {
@@ -47,6 +52,7 @@ const BuscarUsuarioEmail = () => {
       console.error('❌ Error buscando usuario:', error);
       setError(error.message);
       setUsuario(null);
+      setBiometricStatus(null); // ✅ NUEVO: Limpiar estado biométrico en error
       return { success: false, error: error.message };
     } finally {
       setLoading(false);
@@ -74,6 +80,7 @@ const BuscarUsuarioEmail = () => {
     // Reset previous states
     setError('');
     setUsuario(null);
+    setBiometricStatus(null); // ✅ NUEVO: Limpiar estado biométrico
     setLoading(true);
 
     try {
@@ -94,15 +101,22 @@ const BuscarUsuarioEmail = () => {
   };
 
   const handleProcederRegistro = () => {
-    if (usuario) {
-      // Store user data in localStorage for the registration page
+    if (usuario && biometricStatus) {
+      // ✅ MODIFICADO: Incluir datos biométricos en localStorage
       localStorage.setItem('usuario_registro_temp', JSON.stringify({
         id: usuario.id,
         nombre: usuario.nombre,
         apellido: usuario.apellido,
         email: usuario.correo, // Note: API returns 'correo' not 'email'
         telefono: usuario.celular, // Note: API returns 'celular' not 'telefono'
-        genero: usuario.genero || 'No especificado'
+        genero: usuario.genero || 'No especificado',
+        // ✅ NUEVO: Incluir estado biométrico inicial
+        biometric_status: {
+          foto_registrada: biometricStatus.foto_registrada || false,
+          huella_registrada: biometricStatus.huella_registrada || false,
+          tarjeta_registrada: biometricStatus.tarjeta_registrada || false,
+          datos_adicional_existe: biometricStatus.datos_adicional_existe || false
+        }
       }));
       
       // Navigate to biometric registration
@@ -113,6 +127,25 @@ const BuscarUsuarioEmail = () => {
   const handleVolver = () => {
     navigate('/Usuarios');
   };
+
+  // ✅ NUEVA FUNCIÓN: Calcular progreso biométrico
+  const calcularProgresoBiometrico = () => {
+    if (!biometricStatus) return { completados: 0, total: 3, porcentaje: 0 };
+    
+    const completados = [
+      biometricStatus.foto_registrada,
+      biometricStatus.huella_registrada, 
+      biometricStatus.tarjeta_registrada
+    ].filter(Boolean).length;
+    
+    return {
+      completados,
+      total: 3,
+      porcentaje: Math.round((completados / 3) * 100)
+    };
+  };
+
+  const progreso = calcularProgresoBiometrico();
 
   return (
     <div className="usuario-editar-bg">
@@ -201,8 +234,8 @@ const BuscarUsuarioEmail = () => {
                 </div>
               )}
 
-              {/* User Found - Compact Version */}
-              {usuario && (
+              {/* User Found - Enhanced with Biometric Status */}
+              {usuario && biometricStatus && (
                 <div style={{
                   width: '100%',
                   marginTop: '10px',
@@ -230,7 +263,7 @@ const BuscarUsuarioEmail = () => {
                       </h3>
                     </div>
                     
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '15px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span style={{ fontWeight: '600', color: '#453726' }}>Nombre:</span>
                         <span style={{ color: '#453726' }}>{usuario.nombre}</span>
@@ -244,9 +277,94 @@ const BuscarUsuarioEmail = () => {
                         <span style={{ color: '#453726', fontSize: '14px' }}>{usuario.correo}</span>
                       </div>
                     </div>
+
+                    {/* ✅ NUEVO: Estado Biométrico */}
+                    <div style={{
+                      borderTop: '1px solid #D1E7DD',
+                      paddingTop: '15px',
+                      marginTop: '15px'
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '10px'
+                      }}>
+                        <span style={{ fontWeight: '600', color: '#453726', fontSize: '14px' }}>
+                          Datos Biométricos:
+                        </span>
+                        <span style={{ 
+                          color: progreso.completados === 3 ? '#10B981' : '#F59E0B',
+                          fontSize: '12px',
+                          fontWeight: '600'
+                        }}>
+                          {progreso.completados}/3 completados ({progreso.porcentaje}%)
+                        </span>
+                      </div>
+                      
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '12px'
+                        }}>
+                          <span style={{ 
+                            color: biometricStatus.foto_registrada ? '#10B981' : '#DC2626' 
+                          }}>
+                            {biometricStatus.foto_registrada ? '✅' : '❌'}
+                          </span>
+                          <span style={{ color: '#453726' }}>Foto</span>
+                        </div>
+                        
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '12px'
+                        }}>
+                          <span style={{ 
+                            color: biometricStatus.huella_registrada ? '#10B981' : '#DC2626' 
+                          }}>
+                            {biometricStatus.huella_registrada ? '✅' : '❌'}
+                          </span>
+                          <span style={{ color: '#453726' }}>Huella</span>
+                        </div>
+                        
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '12px'
+                        }}>
+                          <span style={{ 
+                            color: biometricStatus.tarjeta_registrada ? '#10B981' : '#DC2626' 
+                          }}>
+                            {biometricStatus.tarjeta_registrada ? '✅' : '❌'}
+                          </span>
+                          <span style={{ color: '#453726' }}>Tarjeta</span>
+                        </div>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div style={{
+                        width: '100%',
+                        height: '6px',
+                        backgroundColor: '#E5E7EB',
+                        borderRadius: '3px',
+                        overflow: 'hidden'
+                      }}>
+                        <div style={{
+                          width: `${progreso.porcentaje}%`,
+                          height: '100%',
+                          backgroundColor: progreso.completados === 3 ? '#10B981' : '#F59E0B',
+                          transition: 'width 0.3s ease'
+                        }} />
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Action Button */}
+                  {/* Action Button - Text changes based on completion */}
                   <button
                     onClick={handleProcederRegistro}
                     style={{
@@ -273,7 +391,11 @@ const BuscarUsuarioEmail = () => {
                       e.target.style.boxShadow = '0 2px 4px rgba(47, 82, 50, 0.3)';
                     }}
                   >
-                    Proceder con Registro Biométrico →
+                    {/* ✅ MEJORADO: Texto dinámico según el estado */}
+                    {progreso.completados === 3 
+                      ? 'Finalizar Registro en Biblioteca →' 
+                      : `Completar Registro Biométrico (${progreso.completados}/3) →`
+                    }
                   </button>
                 </div>
               )}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ModalEscanearRostro from '../Componentes/Modal_InfoBiometrica/ModalEscanearRostro.jsx';
 import ModalEscanearTarjeta from '../Componentes/Modal_InfoBiometrica/ModalEscanearTarjeta.jsx';
@@ -25,21 +25,32 @@ const RegistrarUsuario = () => {
     return null;
   }
 
+  // ✅ NUEVO: Inicializar estados con datos biométricos desde la búsqueda
+  const initialBiometricStatus = usuarioTemp.biometric_status || {
+    foto_registrada: false,
+    huella_registrada: false,
+    tarjeta_registrada: false,
+    datos_adicional_existe: false
+  };
+
   // Estado para modales y registro de biométricos
   const [transicion, setTransicion] = useState(false);
   const [modalRostroOpen, setModalRostroOpen] = useState(false);
   const [modalHuellaOpen, setModalHuellaOpen] = useState(false);
   const [modalTarjetaOpen, setModalTarjetaOpen] = useState(false);
-  const [rostroRegistrado, setRostroRegistrado] = useState(false);
-  const [huellaRegistrada, setHuellaRegistrada] = useState(false);
-  const [tarjetaRegistrada, setTarjetaRegistrada] = useState(false);
+  
+  // ✅ MODIFICADO: Inicializar con valores desde la búsqueda
+  const [rostroRegistrado, setRostroRegistrado] = useState(initialBiometricStatus.foto_registrada);
+  const [huellaRegistrada, setHuellaRegistrada] = useState(initialBiometricStatus.huella_registrada);
+  const [tarjetaRegistrada, setTarjetaRegistrada] = useState(initialBiometricStatus.tarjeta_registrada);
 
   // Estados para loading y errores
   const [loading, setLoading] = useState({
     rostro: false,
     huella: false,
     tarjeta: false,
-    finalizando: false
+    finalizando: false,
+    verificandoEstado: false
   });
   const [errors, setErrors] = useState({
     rostro: '',
@@ -50,6 +61,79 @@ const RegistrarUsuario = () => {
 
   // Habilitar botón solo si los tres están registrados
   const registroCompleto = rostroRegistrado && huellaRegistrada && tarjetaRegistrada;
+
+  // ✅ MODIFICADO: Verificar estado actual solo si es necesario
+  const verificarEstadoActual = async () => {
+    // Si ya tenemos información completa desde la búsqueda, no es necesario verificar nuevamente
+    if (initialBiometricStatus.datos_adicional_existe && 
+        (initialBiometricStatus.foto_registrada && initialBiometricStatus.huella_registrada && initialBiometricStatus.tarjeta_registrada)) {
+      console.log('✅ Estados biométricos ya completos, omitiendo verificación adicional');
+      return;
+    }
+
+    try {
+      setLoading(prev => ({ ...prev, verificandoEstado: true }));
+      console.log('🔍 Verificando estado actual de datos biométricos para usuario:', usuarioId);
+
+      const response = await fetchWithAuth(`/api/business/verificar-registro-completo/${usuarioId}?biblioteca_id=${bibliotecaId}`, {
+        method: 'GET'
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('✅ Estado verificado:', data);
+        
+        // Actualizar estados basado en la respuesta
+        const biometricStatus = data.data?.biometric_status;
+        if (biometricStatus) {
+          setRostroRegistrado(biometricStatus.foto_registrada || false);
+          setHuellaRegistrada(biometricStatus.huella_registrada || false);
+          setTarjetaRegistrada(biometricStatus.tarjeta_registrada || false);
+          
+          console.log('📊 Estados actualizados:', {
+            foto: biometricStatus.foto_registrada,
+            huella: biometricStatus.huella_registrada,
+            tarjeta: biometricStatus.tarjeta_registrada
+          });
+        }
+      } else if (response.status === 400 && data.code === 'VERIFY_04') {
+        // Registro incompleto - esto es normal, actualizar estados
+        const biometricStatus = data.data?.biometric_status;
+        if (biometricStatus) {
+          setRostroRegistrado(biometricStatus.foto_registrada || false);
+          setHuellaRegistrada(biometricStatus.huella_registrada || false);
+          setTarjetaRegistrada(biometricStatus.tarjeta_registrada || false);
+          
+          console.log('📊 Estados actualizados (incompleto):', {
+            foto: biometricStatus.foto_registrada,
+            huella: biometricStatus.huella_registrada,
+            tarjeta: biometricStatus.tarjeta_registrada
+          });
+        }
+      } else {
+        console.warn('⚠️ Error verificando estado:', data.msg);
+        // No mostrar error, solo log para debug
+      }
+
+    } catch (error) {
+      console.error('❌ Error verificando estado actual:', error);
+      // No mostrar error al usuario, es solo para mejorar UX
+    } finally {
+      setLoading(prev => ({ ...prev, verificandoEstado: false }));
+    }
+  };
+
+  // ✅ MODIFICADO: useEffect más inteligente
+  useEffect(() => {
+    console.log('🔄 Inicializando componente con estados biométricos:', initialBiometricStatus);
+    
+    // Solo verificar estado si no tenemos información completa o confiable
+    if (usuarioId && bibliotecaId && !initialBiometricStatus.datos_adicional_existe) {
+      console.log('⚠️ No hay datos adicionales confirmados, verificando estado actual...');
+      verificarEstadoActual();
+    }
+  }, [usuarioId, bibliotecaId]);
 
   // Function to split email at @ symbol
   const splitEmailAtSymbol = (email) => {
@@ -200,10 +284,24 @@ const RegistrarUsuario = () => {
     }
   };
 
-  // Handlers para abrir modales
-  const handleAbrirModalRostro = () => setModalRostroOpen(true);
-  const handleAbrirModalHuella = () => setModalHuellaOpen(true);
-  const handleAbrirModalTarjeta = () => setModalTarjetaOpen(true);
+  // ✅ MODIFICADO: Handlers que verifican estado antes de abrir
+  const handleAbrirModalRostro = () => {
+    if (!rostroRegistrado) {
+      setModalRostroOpen(true);
+    }
+  };
+  
+  const handleAbrirModalHuella = () => {
+    if (!huellaRegistrada) {
+      setModalHuellaOpen(true);
+    }
+  };
+  
+  const handleAbrirModalTarjeta = () => {
+    if (!tarjetaRegistrada) {
+      setModalTarjetaOpen(true);
+    }
+  };
 
   // ✅ HANDLERS SIMPLIFICADOS - Solo actualizan estado
   const handleCerrarModalRostro = async (registrado, imagenBase64) => {
@@ -296,6 +394,19 @@ const RegistrarUsuario = () => {
       <main className="main-content">
         <h1 className="prestamos-title">Usuarios</h1>
         <hr className="prestamos-divider" />
+        
+        {/* ✅ NUEVO: Mostrar loading mientras verifica estado inicial */}
+        {loading.verificandoEstado && (
+          <div style={{
+            textAlign: 'center',
+            padding: '20px',
+            color: '#6b7280',
+            fontSize: '14px'
+          }}>
+            🔍 Verificando datos biométricos existentes...
+          </div>
+        )}
+        
         <div className="usuario-editar-content-row">
           <div className="usuario-editar-card" style={{ height: '580px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
@@ -396,9 +507,10 @@ const RegistrarUsuario = () => {
               <button
                 className="usuario-registrar-btn"
                 style={{ 
-                  backgroundColor: rostroRegistrado ? '#3CB371' : '#2F5232', // ✅ CORREGIDO A VERDE
+                  backgroundColor: rostroRegistrado ? '#3CB371' : '#2F5232',
                   color: 'white',
-                  opacity: loading.rostro ? 0.7 : 1
+                  opacity: loading.rostro ? 0.7 : 1,
+                  cursor: rostroRegistrado ? 'not-allowed' : 'pointer'
                 }}
                 onClick={handleAbrirModalRostro}
                 disabled={rostroRegistrado || loading.rostro}
@@ -423,9 +535,10 @@ const RegistrarUsuario = () => {
               <button
                 className="usuario-registrar-btn"
                 style={{ 
-                  backgroundColor: huellaRegistrada ? '#3CB371' : '#2F5232', // ✅ CORREGIDO A VERDE
+                  backgroundColor: huellaRegistrada ? '#3CB371' : '#2F5232',
                   color: 'white',
-                  opacity: loading.huella ? 0.7 : 1
+                  opacity: loading.huella ? 0.7 : 1,
+                  cursor: huellaRegistrada ? 'not-allowed' : 'pointer'
                 }}
                 onClick={handleAbrirModalHuella}
                 disabled={huellaRegistrada || loading.huella}
@@ -446,9 +559,10 @@ const RegistrarUsuario = () => {
               <button
                 className="usuario-registrar-btn"
                 style={{ 
-                  backgroundColor: tarjetaRegistrada ? '#3CB371' : '#2F5232', // ✅ CORREGIDO A VERDE
+                  backgroundColor: tarjetaRegistrada ? '#3CB371' : '#2F5232',
                   color: 'white',
-                  opacity: loading.tarjeta ? 0.7 : 1
+                  opacity: loading.tarjeta ? 0.7 : 1,
+                  cursor: tarjetaRegistrada ? 'not-allowed' : 'pointer'
                 }}
                 onClick={handleAbrirModalTarjeta}
                 disabled={tarjetaRegistrada || loading.tarjeta}

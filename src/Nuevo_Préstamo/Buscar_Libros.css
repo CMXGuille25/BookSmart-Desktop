@@ -211,11 +211,14 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-.buscar-nombre-btn.active {
-  background: #2F5232;
+.buscar-nombre-btn.active,
+.buscar-isbn-btn.active {
+  background: #2F5232 !important;
+  color: #fff !important;
 }
+.buscar-nombre-btn,
 .buscar-isbn-btn {
-  background: var(--State-Layers-On-Surface-Variant-Opacity-10, rgba(73, 69, 79, 0.10));
+  /* ...existing styles... */
 }
 
 .libro-card {

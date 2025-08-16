@@ -1,38 +1,56 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import PantallaTransicion from '../Componentes/PantallaTransicion/PantallaTransicion';
 import logo1 from '../assets/logo1.png';
 import { useNavigate } from 'react-router-dom';
 import './Buscar_Libros.css';
+import { setSelectedBook, getSelectedBook } from '../utils/prestamo.js';
 import Sidebar from '../Componentes/Sidebar/Sidebar';
 
-const librosEjemplo = [
-  { id: 1, nombre: "Cien años de soledad" },
-  { id: 2, nombre: "El principito" },
-  { id: 3, nombre: "Don Quijote de la Mancha" },
-  { id: 4, nombre: "Rayuela" },
-  { id: 5, nombre: "La sombra del viento" },
-];
 
 const Buscar_Libros = () => {
   const [busqueda, setBusqueda] = useState("");
-  const [libroSeleccionado, setLibroSeleccionado] = useState(null);
-  const [alerta, setAlerta] = useState({ tipo: '', mensaje: '' }); // tipo: 'buscando' | 'error' | ''
+  const [libros, setLibros] = useState([]);
+  const [libroSeleccionado, setLibroSeleccionado] = useState(() => getSelectedBook());
+  const [alerta, setAlerta] = useState({ tipo: '', mensaje: '' });
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
   const searchBoxRef = useRef(null);
   const [mostrarModal, setMostrarModal] = useState(false);
   const navigate = useNavigate();
 
+  // Obtener libros desde la API al montar el componente
+  useEffect(() => {
+    fetch('http://localhost:60881/libros')
+      .then(res => res.json())
+      .then(data => {
+        setLibros(data.data || []);
+      })
+      .catch(() => {
+        setLibros([]);
+        setAlerta({ tipo: 'error', mensaje: 'No se pudieron cargar los libros.' });
+      });
+  }, []);
+
+  // Estado para filtro activo
+  const [filtro, setFiltro] = useState('nombre'); // 'nombre' o 'isbn'
+  // Filtrar libros por nombre o ISBN según el filtro activo
+  const librosFiltrados = libros.filter(libro => {
+    if (filtro === 'nombre') {
+      return libro.nombre && libro.nombre.toLowerCase().includes(busqueda.toLowerCase());
+    } else {
+      return libro.isbn && libro.isbn.toLowerCase().includes(busqueda.toLowerCase());
+    }
+  });
+
+  // Depuración: ver los libros en consola
+  // console.log(libros);
+
   const handleInputChange = (e) => {
     setBusqueda(e.target.value);
-    setLibroSeleccionado(null); // Limpiar selección si el usuario escribe
-    setAlerta({ tipo: '', mensaje: '' }); // Limpiar alerta al escribir
+    setLibroSeleccionado(null);
+    setAlerta({ tipo: '', mensaje: '' });
     setMostrarSugerencias(true);
   };
-
-  // Filtrar libros por nombre
-  const librosFiltrados = librosEjemplo.filter(libro =>
-    libro.nombre.toLowerCase().includes(busqueda.toLowerCase())
-  );
 
   const handleSugerenciaClick = (libro) => {
     setBusqueda(libro.nombre);
@@ -54,27 +72,25 @@ const Buscar_Libros = () => {
     };
   }, [mostrarSugerencias]);
 
-  // Acción al hacer clic en el ícono izquierdo
   const handleBuscarClick = () => {
     if (!busqueda.trim()) {
       setAlerta({ tipo: 'error', mensaje: 'Por favor escribe el nombre del libro.' });
       return;
     }
-    // Buscar libro seleccionado o por texto exacto
     let libro = libroSeleccionado;
     if (!libro) {
-      libro = librosEjemplo.find(l => l.nombre.toLowerCase() === busqueda.trim().toLowerCase());
+      libro = libros.find(l => l.nombre && l.nombre.toLowerCase() === busqueda.trim().toLowerCase());
     }
     if (libro) {
       setAlerta({ tipo: 'buscando', mensaje: `Buscando libro "${libro.nombre}"...` });
       setTimeout(() => {
         setAlerta({ tipo: '', mensaje: '' });
-        // Aquí podrías navegar a la pantalla de detalle en el futuro
       }, 1000);
     } else {
       setAlerta({ tipo: 'error', mensaje: 'Por favor selecciona un libro válido de la lista.' });
     }
   };
+
 
   return (
     <div className="buscar-libros-bg">
@@ -88,8 +104,30 @@ const Buscar_Libros = () => {
         </div>
         <h2 className="buscar-por-title">Buscar por</h2>
         <div className="buscar-por-buttons">
-          <button className="buscar-nombre-btn active">Nombre</button>
-          <button className="buscar-isbn-btn">ISBN</button>
+          <button
+            className={`buscar-nombre-btn${filtro === 'nombre' ? ' active' : ''}`}
+            onClick={() => {
+              setFiltro('nombre');
+              setBusqueda('');
+              setLibroSeleccionado(null);
+              setMostrarSugerencias(false);
+              setAlerta({ tipo: '', mensaje: '' });
+            }}
+          >
+            Nombre
+          </button>
+          <button
+            className={`buscar-isbn-btn${filtro === 'isbn' ? ' active' : ''}`}
+            onClick={() => {
+              setFiltro('isbn');
+              setBusqueda('');
+              setLibroSeleccionado(null);
+              setMostrarSugerencias(false);
+              setAlerta({ tipo: '', mensaje: '' });
+            }}
+          >
+            ISBN
+          </button>
         </div>
         <div className="libro-card">
           <div className="libro-card-title">Libro que se prestará</div>
@@ -114,7 +152,7 @@ const Buscar_Libros = () => {
                 <input
                   type="text"
                   className="search-input"
-                  placeholder="Buscar libro..."
+                  placeholder={filtro === 'nombre' ? "Buscar libro por nombre..." : "Buscar libro por ISBN..."}
                   value={busqueda}
                   onChange={handleInputChange}
                   autoComplete="off"
@@ -125,7 +163,7 @@ const Buscar_Libros = () => {
                     {librosFiltrados.length > 0 ? (
                       librosFiltrados.map(libro => (
                         <div
-                          key={libro.id}
+                          key={libro.id || libro.libro_biblioteca_id || libro.nombre}
                           className="sugerencia-item"
                           onClick={() => handleSugerenciaClick(libro)}
                         >
@@ -145,8 +183,6 @@ const Buscar_Libros = () => {
                   </div>
                 )}
               </div>
-              {/* Alerta visual centrada debajo del recuadro blanco */}
-            {/* ...existing code... */}
             {/* Icono derecho dentro del recuadro blanco */}
             <div
               className="search-content-icon-box right"
@@ -182,6 +218,7 @@ const Buscar_Libros = () => {
             className="siguiente-btn"
             onClick={() => {
               if (libroSeleccionado) {
+                setSelectedBook(libroSeleccionado);
                 setMostrarModal(true);
                 setTimeout(() => {
                   setMostrarModal(false);

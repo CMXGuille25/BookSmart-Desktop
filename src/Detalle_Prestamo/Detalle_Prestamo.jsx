@@ -1,13 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PantallaTransicion from '../Componentes/PantallaTransicion/PantallaTransicion';
 import logo1 from '../assets/logo1.png';
 import './Detalle_Prestamo.css';
 import Sidebar from '../Componentes/Sidebar/Sidebar.jsx';
+import { getSelectedBook } from '../utils/prestamo.js';
 
 const DetallePrestamo = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [libro, setLibro] = useState(null);
+  const [fechaPrestamo, setFechaPrestamo] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const libroSel = getSelectedBook();
+    setLibro(libroSel);
+    // Fecha actual en formato dd/mm/yyyy
+    const hoy = new Date();
+    const dia = String(hoy.getDate()).padStart(2, '0');
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+    const anio = hoy.getFullYear();
+    setFechaPrestamo(`${dia}/${mes}/${anio}`);
+  }, []);
+
   const handleGuardar = () => {
     setMostrarModal(true);
     setTimeout(() => {
@@ -15,6 +30,7 @@ const DetallePrestamo = () => {
       navigate('/Inicio');
     }, 1000);
   };
+
   return (
     <div className="detalle-bg">
       <Sidebar />
@@ -26,8 +42,8 @@ const DetallePrestamo = () => {
             <div style={{ display: 'flex', alignItems: 'flex-start', height: '177px' }}>
               <div className="libro-imagen"></div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '16px' }}>
-                <div className="titulo-libro">Título del libro</div>
-                <div className="autor-libro">Autor</div>
+                <div className="titulo-libro">{libro ? libro.nombre : 'Título del libro'}</div>
+                <div className="autor-libro">{libro && libro.autor ? libro.autor : 'Autor'}</div>
                 <div className="estado-prestamo">Estado del préstamo:</div>
                 <button className="desplegable-prestamo">
                   <select className="desplegable-texto">
@@ -47,7 +63,7 @@ const DetallePrestamo = () => {
             <div style={{ display: 'flex', alignItems: 'baseline', marginTop: '10px' }}>
               <div className="fecha-prestamo">Fecha de préstamo:</div>
               <div style={{ width: '20px' }}></div>
-              <div className="fecha-valor">09/06/2025</div>
+              <div className="fecha-valor">{fechaPrestamo}</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', marginTop: '-25px' }}>
               <div className="fecha-prestamo">Fecha de entrega:</div>

@@ -45,8 +45,21 @@ const Buscar_Libros = () => {
   // Depuración: ver los libros en consola
   // console.log(libros);
 
+  const [inputError, setInputError] = useState("");
   const handleInputChange = (e) => {
-    setBusqueda(e.target.value);
+    let value = e.target.value;
+    if (filtro === 'isbn') {
+      // Si intenta escribir algo que no sea número, mostrar mensaje
+      if (/[^0-9]/.test(value)) {
+        setInputError("Solo se permiten números para el ISBN.");
+      } else {
+        setInputError("");
+      }
+      value = value.replace(/[^0-9]/g, '');
+    } else {
+      setInputError("");
+    }
+    setBusqueda(value);
     setLibroSeleccionado(null);
     setAlerta({ tipo: '', mensaje: '' });
     setMostrarSugerencias(true);
@@ -150,7 +163,9 @@ const Buscar_Libros = () => {
             </div>
               <div className="search-input-wrapper">
                 <input
-                  type="text"
+                  type={filtro === 'isbn' ? 'tel' : 'text'}
+                  inputMode={filtro === 'isbn' ? 'numeric' : undefined}
+                  pattern={filtro === 'isbn' ? '[0-9]*' : undefined}
                   className="search-input"
                   placeholder={filtro === 'nombre' ? "Buscar libro por nombre..." : "Buscar libro por ISBN..."}
                   value={busqueda}
@@ -179,7 +194,9 @@ const Buscar_Libros = () => {
                 ) : null}
                 {((!busqueda.trim() && !alerta.tipo) || (busqueda && !libroSeleccionado && !mostrarSugerencias && !alerta.tipo)) && (
                   <div className="sugerencia-mensaje-vacio">
-                    Empieza a escribir para ver sugerencias
+                    {inputError
+                      ? inputError
+                      : "Empieza a escribir para ver sugerencias"}
                   </div>
                 )}
               </div>

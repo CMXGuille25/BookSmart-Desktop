@@ -1,11 +1,12 @@
 
-import React, { useState, useRef, useEffect } from 'react';
-import PantallaTransicion from '../Componentes/PantallaTransicion/PantallaTransicion';
-import logo1 from '../assets/logo1.png';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Buscar_Libros.css';
-import { setSelectedBook, getSelectedBook } from '../utils/prestamo.js';
+import PantallaTransicion from '../Componentes/PantallaTransicion/PantallaTransicion';
 import Sidebar from '../Componentes/Sidebar/Sidebar';
+import logo1 from '../assets/logo1.png';
+import { fetchWithAuth } from '../utils/auth.js';
+import { getSelectedBook, setSelectedBook } from '../utils/prestamo.js';
+import './Buscar_Libros.css';
 
 
 const Buscar_Libros = () => {
@@ -20,7 +21,7 @@ const Buscar_Libros = () => {
 
   // Obtener libros desde la API al montar el componente
   useEffect(() => {
-    fetch('http://localhost:60881/libros')
+    fetchWithAuth('/api/business/libros')
       .then(res => res.json())
       .then(data => {
         setLibros(data.data || []);

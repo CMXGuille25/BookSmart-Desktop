@@ -163,26 +163,61 @@ const BuscarUsuarios = () => {
     }
   });
 
-  // Handler para el botón Editar
-  const handleEditarClick = (usuario) => {
-    // Store user data for editing with complete information
-    const usuarioParaEditar = {
-      ...usuario,
-      // Ensure we have the user ID for editing
-      id: usuario.id,
-      usuario_id: usuario.id
-    };
-    
-    localStorage.setItem('usuario_editar_temp', JSON.stringify(usuarioParaEditar));
-    console.log('📝 Usuario seleccionado para editar:', usuarioParaEditar);
-    
-    navigate('/Editar_Usuario');
+  // ✅ ADDED: Missing function for "Nuevo usuario" button
+  const handleNuevoUsuarioClick = () => {
+    navigate('/Registrar_Usuario');
   };
 
-  // Handler para el botón Nuevo usuario
-  const handleNuevoUsuarioClick = () => {
-    navigate('/Buscar_Usuario_Email');
+  // ✅ MODIFIED: Handler para el botón Borrar (reemplaza handleEditarClick)
+  const handleBorrarClick = async (usuario) => {
+    // Confirm deletion
+    const confirmacion = window.confirm(
+      `¿Estás seguro de que deseas eliminar al usuario "${usuario.nombre} ${usuario.apellido}"?\n\nEsta acción no se puede deshacer.`
+    );
+    
+    if (!confirmacion) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      console.log('🗑️ Eliminando usuario:', usuario.id);
+
+      const response = await fetchWithAuth('/api/business/usuarios-biblioteca/remove-user', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: parseInt(usuario.id), // ✅ CORRECTED: Use user_id instead of just id
+          biblioteca_id: parseInt(bibliotecaId) // ✅ CORRECTED: Include biblioteca_id
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('✅ Usuario eliminado exitosamente:', data);
+        
+        // Show success message
+        alert(`Usuario "${usuario.nombre} ${usuario.apellido}" eliminado exitosamente.`);
+        
+        // Refresh the user list
+        await fetchUsuarios(pagination.current_page, searchValue);
+        
+      } else {
+        throw new Error(data.msg || 'Error al eliminar usuario');
+      }
+
+    } catch (error) {
+      console.error('❌ Error eliminando usuario:', error);
+      alert(`Error al eliminar usuario: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // ✅ REMOVED: handleEditarClick function (no longer needed)
 
   // ✅ MODIFIED: Handle search with API integration
   const handleBuscar = async (e) => {
@@ -373,18 +408,26 @@ const BuscarUsuarios = () => {
               <div className="usuario-prestamo-card" key={u.id}>
                 <div className="usuario-card-icon">{cardIcon}</div>
                 <div className="usuario-card-info">
-                  {/* ✅ MODIFIED: Use apellido from API */}
                   <div className="usuario-libro-titulo">{u.nombre} {u.apellido}</div>
                   <div className="usuario-libro-autor">{u.genero}</div>
                   <div className="usuario-libro-entrega">{u.correo}</div>
                   <div className="usuario-libro-responsable">{u.celular}</div>
-                  
                 </div>
-                <button className="usuario-editar-btn" onClick={() => handleEditarClick(u)}>
-                  <span className="usuario-editar-btn-text">Editar</span>
-                  <svg className="usuario-editar-btn-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 22" fill="none">
-                    <path d="M2.83325 19.25L11.3333 19.25H19.8333" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M11.5429 5.34269L14.2142 2.74996L18.8889 7.28723L16.2176 9.87996M11.5429 5.34269L6.26835 10.4621C6.07803 10.6468 5.97112 10.8973 5.97112 11.1585L5.97112 15.2878L10.2255 15.2878C10.4947 15.2878 10.7528 15.1841 10.9431 14.9993L16.2176 9.87996M11.5429 5.34269L16.2176 9.87996" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                
+                {/* ✅ MODIFIED: Changed from Editar to Borrar button */}
+                <button 
+                  className="usuario-borrar-btn"
+                  onClick={() => handleBorrarClick(u)}
+                  disabled={loading}
+                  style={{
+                    opacity: loading ? 0.7 : 1,
+                    cursor: loading ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  <span className="usuario-borrar-btn-text">Borrar</span>
+                  {/* ✅ NEW: Delete/trash icon */}
+                  <svg className="usuario-borrar-btn-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 6H21M8 6V4C8 3.44772 8.44772 3 9 3H15C15.5523 3 16 3.44772 16 4V6M19 6V20C19 20.5523 18.4477 21 18 21H6C5.44772 21 5 20.5523 5 20V6H19ZM10 11V17M14 11V17" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </button>
               </div>

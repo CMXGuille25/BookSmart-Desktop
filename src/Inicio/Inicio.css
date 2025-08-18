@@ -1,7 +1,9 @@
 .inicio-titulo-libro {
   display: flex;
-  width: 163.831px;
-  height: 20.302px;
+  width: 100%; /* ✅ CHANGED: Use 100% instead of fixed 320px */
+  max-width: 100%; /* Ensure it doesn't exceed container */
+  height: auto; /* Allow height to adjust */
+  min-height: 20.302px; /* Maintain minimum height */
   flex-direction: column;
   justify-content: center;
   flex-shrink: 0;
@@ -10,23 +12,12 @@
   font-size: 20px;
   font-style: normal;
   font-weight: 500;
-  line-height: 20px; /* 100% */
+  line-height: 20px;
   letter-spacing: 0.1px;
-}
-.inicio-titulo-libro {
-  display: flex;
-  width: 163.831px;
-  height: 20.302px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #000;
-  font-family: "League Spartan";
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 20px; /* 100% */
-  letter-spacing: 0.1px;
+  word-wrap: break-word; /* Break long words */
+  overflow-wrap: break-word; /* Additional word wrapping */
+  box-sizing: border-box;
+  margin-bottom: 4px; /* ✅ ADDED: small margin for separation */
 }
 /* Icono del libro vacío para las tarjetas de préstamo */
 .card-icon-img {
@@ -145,6 +136,24 @@
   flex-direction: column;
   justify-content: flex-start;
   height: 94.862px;
+  width: 100%;
+  max-width: calc(100% - 120px); /* Account for button and icon space */
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent overflow */
+}
+
+/* ✅ FIXED: Adjust card-info to better distribute content */
+.card-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* ✅ CHANGED: distribute space evenly */
+  gap: 6px; /* ✅ INCREASED: from 4px to 6px for better spacing */
+  width: 100%;
+  max-width: calc(100% - 120px);
+  box-sizing: border-box;
+  overflow: hidden;
+  height: 100%; /* ✅ ADDED: take full height of card */
+  min-height: 90px; /* ✅ ADDED: minimum height for content */
 }
 
 .libro-titulo {
@@ -586,14 +595,18 @@
   gap: 32px;
 }
 
+/* ✅ FIXED: Increase card height to accommodate all content including status badge */
 .prestamo-card {
   background: #FEF7FF;
   box-shadow: 0px 4px 4px rgba(0,0,0,0.15);
   border-radius: 10px;
   padding: 24px 32px;
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* ✅ CHANGED: align to top instead of center */
   gap: 32px;
+  overflow: hidden;
+  box-sizing: border-box;
+  min-height: 140px; /* ✅ ADDED: Increase minimum height to fit status badge */
 }
 
 .card-icon {
@@ -604,6 +617,10 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  width: 100%;
+  max-width: calc(100% - 120px); /* Account for button and icon space */
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent overflow */
 }
 
 .editar-btn {

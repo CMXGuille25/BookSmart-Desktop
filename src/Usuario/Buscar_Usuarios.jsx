@@ -1,8 +1,8 @@
-import { useState } from 'react';
-// import BuscarCorreo from '../Componentes/Cuadro_Dialogo/Buscar_Correo.jsx';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BuscarCorreo from '../Componentes/Cuadro_Dialogo/Buscar_Correo.jsx';
 import Sidebar from '../Componentes/Sidebar/Sidebar.jsx';
+import { fetchWithAuth, validateTokenBeforeRequest } from '../utils/auth.js';
 import './Usuario.css';
 
 const menuIcons = {
@@ -24,24 +24,140 @@ const cardIcon = (
   <div className="usuario-card-icon-img" />
 );
 
-
-const Inicio = () => {
+const BuscarUsuarios = () => {
   const navigate = useNavigate();
   const [searchType, setSearchType] = useState('nombre');
   const [searchValue, setSearchValue] = useState('');
   const [showModal, setShowModal] = useState(false);
+  
+  // ✅ NEW: API-related states
+  const [usuarios, setUsuarios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    per_page: 10,
+    total: 0,
+    total_pages: 0
+  });
+  const [bibliotecaInfo, setBibliotecaInfo] = useState(null);
 
-  // Simulación de usuarios
-  const usuarios = [
-    { id: 1, nombre: 'Juan Pérez', correo: 'juan@correo.com', genero: 'Masculino', celular: '1234567890' },
-    { id: 2, nombre: 'Ana López', correo: 'ana@correo.com', genero: 'Femenino', celular: '0987654321' },
-    // ...más usuarios
-  ];
+  // Get biblioteca_id from localStorage
+  const bibliotecaId = localStorage.getItem('biblioteca');
 
-  // Filtrado
+  // ✅ CORRECTED: Function to fetch users from API with the correct URL structure
+  const fetchUsuarios = async (page = 1, search = '') => {
+    try {
+      setLoading(true);
+      setError('');
+
+      // Validate token before making request
+      if (!validateTokenBeforeRequest()) {
+        return;
+      }
+
+      // ✅ ENHANCED: Better validation and debugging for biblioteca_id
+      const bibliotecaIdRaw = localStorage.getItem('biblioteca');
+      console.log('🔍 Raw biblioteca_id from localStorage:', bibliotecaIdRaw);
+      
+      if (!bibliotecaIdRaw) {
+        throw new Error('ID de biblioteca no encontrado. Por favor inicia sesión nuevamente.');
+      }
+
+      // Parse and validate biblioteca_id
+      const bibliotecaIdParsed = parseInt(bibliotecaIdRaw);
+      console.log('🔍 Parsed biblioteca_id:', bibliotecaIdParsed);
+      
+      if (isNaN(bibliotecaIdParsed)) {
+        throw new Error(`ID de biblioteca inválido: "${bibliotecaIdRaw}". Debe ser un número.`);
+      }
+
+      // ✅ CORRECTED: Build query parameters (without biblioteca_id, since it goes in the URL path)
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: '10'
+      });
+
+      if (search && search.trim() !== '') {
+        queryParams.append('search', search.trim());
+      }
+
+      // ✅ CORRECTED: Use biblioteca_id as URL parameter, not query parameter
+      const finalUrl = `/api/business/usuario-biblioteca/${bibliotecaIdParsed}?${queryParams.toString()}`;
+      console.log('🌐 Final URL being called:', finalUrl);
+      console.log('📦 Query parameters:', Object.fromEntries(queryParams));
+
+      // Make API call
+      const response = await fetchWithAuth(finalUrl, {
+        method: 'GET'
+      });
+
+      console.log('📡 Response status:', response.status);
+      
+      const data = await response.json();
+      console.log('📄 Response data:', data);
+
+      if (response.ok) {
+        console.log('✅ Usuarios obtenidos exitosamente:', data);
+        
+        // Update state with API data
+        setUsuarios(data.data.usuarios || []);
+        setPagination(data.data.pagination || {});
+        setBibliotecaInfo(data.data.biblioteca || null);
+        
+      } else {
+        // ✅ ENHANCED: Better error logging
+        console.error('❌ API Error Response:', {
+          status: response.status,
+          code: data.code,
+          message: data.msg,
+          data: data.data
+        });
+        
+        throw new Error(data.msg || 'Error al obtener usuarios');
+      }
+
+    } catch (error) {
+      console.error('❌ Error fetching usuarios:', error);
+      setError(error.message || 'Error al cargar usuarios');
+      setUsuarios([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ NEW: Debug function to check localStorage content
+  const debugLocalStorage = () => {
+    console.log('🔍 Debugging localStorage:');
+    console.log('- biblioteca:', localStorage.getItem('biblioteca'));
+    console.log('- user_id:', localStorage.getItem('user_id'));
+    console.log('- usuario_id:', localStorage.getItem('usuario_id'));
+    console.log('- token:', localStorage.getItem('authToken') ? 'Present' : 'Missing');
+    console.log('- All localStorage keys:', Object.keys(localStorage));
+  };
+
+  // ✅ MODIFIED: Enhanced useEffect with debugging
+  useEffect(() => {
+    // Debug localStorage content
+    debugLocalStorage();
+    
+    if (bibliotecaId) {
+      console.log('🚀 Starting fetchUsuarios with biblioteca_id:', bibliotecaId);
+      fetchUsuarios();
+    } else {
+      console.error('❌ No biblioteca_id found in localStorage');
+      setError('ID de biblioteca no encontrado');
+      setLoading(false);
+    }
+  }, [bibliotecaId]);
+
+  // ✅ MODIFIED: Filter users locally (API also supports server-side search)
   const usuariosFiltrados = usuarios.filter(u => {
+    if (!searchValue.trim()) return true;
+    
     if (searchType === 'nombre') {
-      return u.nombre.toLowerCase().includes(searchValue.toLowerCase());
+      const nombreCompleto = `${u.nombre} ${u.apellido}`.toLowerCase();
+      return nombreCompleto.includes(searchValue.toLowerCase());
     } else {
       return u.correo.toLowerCase().includes(searchValue.toLowerCase());
     }
@@ -49,17 +165,24 @@ const Inicio = () => {
 
   // Handler para el botón Editar
   const handleEditarClick = (usuario) => {
-    navigate('/Editar_Usuario'); // Aquí podrías pasar datos del usuario
+    // Store user data for editing
+    localStorage.setItem('usuario_editar_temp', JSON.stringify(usuario));
+    navigate('/Editar_Usuario');
   };
 
   // Handler para el botón Nuevo usuario
   const handleNuevoUsuarioClick = () => {
-    navigate('/Buscar_Usuario_Email'); // Changed to go to email search first
+    navigate('/Buscar_Usuario_Email');
   };
 
-  // Handler para buscar por correo y mostrar modal si no se encuentra
-  const handleBuscar = (e) => {
+  // ✅ MODIFIED: Handle search with API integration
+  const handleBuscar = async (e) => {
     e.preventDefault();
+    
+    // For server-side search, call API with search term
+    await fetchUsuarios(1, searchValue);
+    
+    // Show modal if no results found and searching by email
     if (searchType === 'correo' && usuariosFiltrados.length === 0 && searchValue.trim() !== '') {
       setShowModal(true);
     }
@@ -69,12 +192,87 @@ const Inicio = () => {
   const handleBuscarCorreoSubmit = (e) => {
     e.preventDefault();
     const correo = e.target.elements[0].value;
-    // Simulación: si el correo no está vacío, se considera válido
     if (correo.trim() !== '') {
       setShowModal(false);
-      navigate('/Editar_Usuario');
+      navigate('/Buscar_Usuario_Email');
     }
   };
+
+  // ✅ NEW: Loading component
+  if (loading) {
+    return (
+      <div className="usuario-bg">
+        <Sidebar />
+        <main className="usuario-main-content">
+          <h1 className="usuario-prestamos-title">Usuarios</h1>
+          <hr className="usuario-prestamos-divider" />
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '400px',
+            flexDirection: 'column',
+            gap: '10px'
+          }}>
+            <div style={{ color: '#6b7280', fontSize: '16px' }}>
+              🔄 Cargando usuarios...
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // ✅ NEW: Error component
+  if (error) {
+    return (
+      <div className="usuario-bg">
+        <Sidebar />
+        <main className="usuario-main-content">
+          <h1 className="usuario-prestamos-title">Usuarios</h1>
+          <hr className="usuario-prestamos-divider" />
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '400px',
+            flexDirection: 'column',
+            gap: '20px'
+          }}>
+            <div style={{ 
+              color: '#dc2626', 
+              fontSize: '18px', 
+              fontWeight: '500',
+              textAlign: 'center'
+            }}>
+              ⚠️ Error al cargar usuarios
+            </div>
+            <div style={{ 
+              color: '#6b7280', 
+              fontSize: '14px',
+              textAlign: 'center'
+            }}>
+              {error}
+            </div>
+            <button 
+              onClick={() => fetchUsuarios()}
+              style={{
+                backgroundColor: '#3B82F6',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              Reintentar
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="usuario-bg">
@@ -82,7 +280,13 @@ const Inicio = () => {
       <main className="usuario-main-content">
         <h1 className="usuario-prestamos-title">Usuarios</h1>
         <div className="usuario-prestamos-desc-row">
-          <div className="usuario-prestamos-desc">Administra los datos de los usuarios registrados.</div>
+          <div className="usuario-prestamos-desc">
+            {/* ✅ NEW: Show biblioteca info if available */}
+            {bibliotecaInfo 
+              ? `Administra los usuarios registrados en ${bibliotecaInfo.nombre}.`
+              : 'Administra los datos de los usuarios registrados.'
+            }
+          </div>
           <button className="usuario-nuevo-prestamo" onClick={handleNuevoUsuarioClick}>
             Nuevo usuario
             <svg className="usuario-nuevo-prestamo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 12" fill="none">
@@ -92,6 +296,24 @@ const Inicio = () => {
           </button>
         </div>
         <hr className="usuario-prestamos-divider" />
+        
+        {/* ✅ NEW: Show summary stats */}
+        {pagination.total > 0 && (
+          <div style={{
+            display: 'flex',
+            gap: '20px',
+            marginBottom: '20px',
+            padding: '10px',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '8px',
+            fontSize: '14px',
+            color: '#6b7280'
+          }}>
+            <span>📊 Total: {pagination.total} usuarios</span>
+            {bibliotecaInfo && <span>📍 {bibliotecaInfo.nombre}</span>}
+          </div>
+        )}
+        
         <div className="usuario-prestamos-header">
           <form className="usuario-search-bar usuario-search-bar-form" onSubmit={handleBuscar}>
             <div className="usuario-search-bar-input-wrapper">
@@ -125,29 +347,95 @@ const Inicio = () => {
         </div>
 
         <section className="usuario-prestamos-list">
-          {usuariosFiltrados.map((u) => (
-            <div className="usuario-prestamo-card" key={u.id}>
-              <div className="usuario-card-icon">{cardIcon}</div>
-              <div className="usuario-card-info">
-                <div className="usuario-libro-titulo">{u.nombre}</div>
-                <div className="usuario-libro-autor">{u.genero}</div>
-                <div className="usuario-libro-entrega">{u.correo}</div>
-                <div className="usuario-libro-responsable">{u.celular}</div>
-              </div>
-              <button className="usuario-editar-btn" onClick={() => handleEditarClick(u)}>
-                <span className="usuario-editar-btn-text">Editar</span>
-                <svg className="usuario-editar-btn-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 22" fill="none">
-                  <path d="M2.83325 19.25L11.3333 19.25H19.8333" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M11.5429 5.34269L14.2142 2.74996L18.8889 7.28723L16.2176 9.87996M11.5429 5.34269L6.26835 10.4621C6.07803 10.6468 5.97112 10.8973 5.97112 11.1585L5.97112 15.2878L10.2255 15.2878C10.4947 15.2878 10.7528 15.1841 10.9431 14.9993L16.2176 9.87996M11.5429 5.34269L16.2176 9.87996" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
+          {usuariosFiltrados.length === 0 ? (
+            <div style={{
+              textAlign: 'center',
+              padding: '40px',
+              color: '#6b7280',
+              fontSize: '16px'
+            }}>
+              {searchValue.trim() 
+                ? `No se encontraron usuarios que coincidan con "${searchValue}"`
+                : 'No hay usuarios registrados en esta biblioteca'
+              }
             </div>
-          ))}
+          ) : (
+            usuariosFiltrados.map((u) => (
+              <div className="usuario-prestamo-card" key={u.id}>
+                <div className="usuario-card-icon">{cardIcon}</div>
+                <div className="usuario-card-info">
+                  {/* ✅ MODIFIED: Use apellido from API */}
+                  <div className="usuario-libro-titulo">{u.nombre} {u.apellido}</div>
+                  <div className="usuario-libro-autor">{u.genero}</div>
+                  <div className="usuario-libro-entrega">{u.correo}</div>
+                  <div className="usuario-libro-responsable">{u.celular}</div>
+                  
+                </div>
+                <button className="usuario-editar-btn" onClick={() => handleEditarClick(u)}>
+                  <span className="usuario-editar-btn-text">Editar</span>
+                  <svg className="usuario-editar-btn-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 22" fill="none">
+                    <path d="M2.83325 19.25L11.3333 19.25H19.8333" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M11.5429 5.34269L14.2142 2.74996L18.8889 7.28723L16.2176 9.87996M11.5429 5.34269L6.26835 10.4621C6.07803 10.6468 5.97112 10.8973 5.97112 11.1585L5.97112 15.2878L10.2255 15.2878C10.4947 15.2878 10.7528 15.1841 10.9431 14.9993L16.2176 9.87996M11.5429 5.34269L16.2176 9.87996" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            ))
+          )}
         </section>
+        
+        {/* ✅ NEW: Pagination controls (if needed) */}
+        {pagination.total_pages > 1 && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '10px',
+            marginTop: '20px',
+            padding: '20px'
+          }}>
+            <button
+              onClick={() => fetchUsuarios(pagination.current_page - 1, searchValue)}
+              disabled={!pagination.has_prev_page}
+              style={{
+                padding: '8px 16px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                backgroundColor: pagination.has_prev_page ? 'white' : '#f3f4f6',
+                color: pagination.has_prev_page ? '#374151' : '#9ca3af',
+                cursor: pagination.has_prev_page ? 'pointer' : 'not-allowed'
+              }}
+            >
+              Anterior
+            </button>
+            
+            <span style={{
+              padding: '8px 16px',
+              color: '#6b7280',
+              fontSize: '14px'
+            }}>
+              Página {pagination.current_page} de {pagination.total_pages}
+            </span>
+            
+            <button
+              onClick={() => fetchUsuarios(pagination.current_page + 1, searchValue)}
+              disabled={!pagination.has_next_page}
+              style={{
+                padding: '8px 16px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                backgroundColor: pagination.has_next_page ? 'white' : '#f3f4f6',
+                color: pagination.has_next_page ? '#374151' : '#9ca3af',
+                cursor: pagination.has_next_page ? 'pointer' : 'not-allowed'
+              }}
+            >
+              Siguiente
+            </button>
+          </div>
+        )}
+        
         {showModal && <BuscarCorreo onSubmit={handleBuscarCorreoSubmit} />}
       </main>
     </div>
   );
 };
 
-export default Inicio;
+export default BuscarUsuarios;

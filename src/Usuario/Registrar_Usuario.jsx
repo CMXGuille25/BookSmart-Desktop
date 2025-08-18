@@ -94,7 +94,7 @@ const RegistrarUsuario = () => {
       console.log('🔍 Verificando estado actual de datos biométricos para usuario:', usuarioId);
 
       const response = await fetchWithAuth(`/api/business/verificar-registro-completo/${usuarioId}?biblioteca_id=${bibliotecaId}`, {
-        method: 'GET'
+        method: 'POST'
       });
 
       const data = await response.json();

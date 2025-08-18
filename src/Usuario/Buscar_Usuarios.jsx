@@ -165,8 +165,17 @@ const BuscarUsuarios = () => {
 
   // Handler para el botón Editar
   const handleEditarClick = (usuario) => {
-    // Store user data for editing
-    localStorage.setItem('usuario_editar_temp', JSON.stringify(usuario));
+    // Store user data for editing with complete information
+    const usuarioParaEditar = {
+      ...usuario,
+      // Ensure we have the user ID for editing
+      id: usuario.id,
+      usuario_id: usuario.id
+    };
+    
+    localStorage.setItem('usuario_editar_temp', JSON.stringify(usuarioParaEditar));
+    console.log('📝 Usuario seleccionado para editar:', usuarioParaEditar);
+    
     navigate('/Editar_Usuario');
   };
 

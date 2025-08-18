@@ -43,7 +43,7 @@ const Escanear_Huella_Usuario = () => {
       setTimeout(() => {
         setMostrarModal(false);
         // Navigate to the next step - book selection or loan creation
-        navigate('/Buscar_Libros'); // or whatever your next step is
+        navigate('/Confirmar_Prestamo'); // or whatever your next step is
       }, 1500);
     }
   };

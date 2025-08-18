@@ -304,7 +304,7 @@ const Inicio = () => {
                   className="editar-btn" 
                   onClick={() => {
                     // Store prestamo data for editing
-                    localStorage.setItem('prestamo_editar_temp', JSON.stringify(prestamo));
+                    localStorage.setItem('prestamo_detalle_id', prestamo.id);
                     navigate('/Detalle_Prestamo');
                   }}
                 >

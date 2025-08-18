@@ -165,7 +165,7 @@ const BuscarUsuarios = () => {
 
   // ✅ ADDED: Missing function for "Nuevo usuario" button
   const handleNuevoUsuarioClick = () => {
-    navigate('/Registrar_Usuario');
+    navigate('/Buscar_Usuario_Email');
   };
 
   // ✅ MODIFIED: Handler para el botón Borrar (reemplaza handleEditarClick)

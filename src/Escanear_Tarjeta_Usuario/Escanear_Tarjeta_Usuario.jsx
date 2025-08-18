@@ -14,16 +14,31 @@ const Escanear_Tarjeta_Usuario = () => {
   const [scanSuccess, setScanSuccess] = useState(false);
   const navigate = useNavigate();
 
+  // ✅ ADDED: Get biblioteca_id from localStorage
+  const bibliotecaId = localStorage.getItem('biblioteca');
+
   // Función para verificar tarjeta RFID
   const handleScanCard = async () => {
     try {
       setIsScanning(true);
       setError('');
-      console.log('🔍 Iniciando verificación de tarjeta RFID...');
+
+      // ✅ ADDED: Validate biblioteca_id before making request
+      if (!bibliotecaId) {
+        throw new Error('ID de biblioteca no encontrado. Por favor inicia sesión nuevamente.');
+      }
+
+      console.log('🔍 Iniciando verificación de tarjeta RFID para biblioteca:', bibliotecaId);
 
       // Llamar al endpoint de verificación RFID
       const response = await fetchWithAuth('/api/business/verificar-rfid', {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          biblioteca_id: parseInt(bibliotecaId) // ✅ FIXED: Now using the actual bibliotecaId from localStorage
+        })
       });
 
       const data = await response.json();
@@ -72,6 +87,62 @@ const Escanear_Tarjeta_Usuario = () => {
       setIsScanning(false);
     }
   };
+
+  // ✅ ADDED: Early return if no biblioteca_id found
+  if (!bibliotecaId) {
+    return (
+      <div className="buscar-libros-bg">
+        <Sidebar />
+        <div className="buscar-libros-content">
+          <h1 className="nuevo-prestamo-title">Nuevo préstamo</h1>
+          <div className="buscar-divider">
+            <svg xmlns="http://www.w3.org/2000/svg" width="859.012" height="4" viewBox="0 0 860 4" fill="none">
+              <path d="M0 2L859.012 2" stroke="#3A332A" strokeWidth="3" />
+            </svg>
+          </div>
+          
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '400px',
+            flexDirection: 'column',
+            gap: '20px'
+          }}>
+            <div style={{ 
+              color: '#dc2626', 
+              fontSize: '18px', 
+              fontWeight: '500',
+              textAlign: 'center'
+            }}>
+              ⚠️ Datos de sesión incompletos
+            </div>
+            <div style={{ 
+              color: '#6b7280', 
+              fontSize: '14px',
+              textAlign: 'center'
+            }}>
+              No se encontró el ID de biblioteca. Por favor inicia sesión nuevamente.
+            </div>
+            <button 
+              onClick={() => navigate('/Inicio')}
+              style={{
+                backgroundColor: '#3B82F6',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              Ir al inicio de sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Función para continuar al siguiente paso
   const handleSiguiente = () => {
@@ -165,10 +236,10 @@ const Escanear_Tarjeta_Usuario = () => {
               color: '#dc2626',
               fontSize: '13px',
               textAlign: 'center',
-              margin: '10px 0', // Margin más pequeño para error
+              margin: '10px 0',
               fontWeight: '500',
               backgroundColor: '#FEF2F2',
-              padding: '8px', // Padding más pequeño
+              padding: '8px',
               borderRadius: '6px',
               border: '1px solid #FCA5A5'
             }}>
@@ -182,8 +253,8 @@ const Escanear_Tarjeta_Usuario = () => {
               className="escanear-tarjeta-siguiente-btn"
               onClick={handleScanCard}
               style={{
-                backgroundColor: '#2F5232', // Verde
-                marginTop: error ? '5px' : '10px' // Margin condicional
+                backgroundColor: '#2F5232',
+                marginTop: error ? '5px' : '10px'
               }}
             >
               {error ? 'Reintentar' : 'Escanear Tarjeta'}
@@ -196,7 +267,7 @@ const Escanear_Tarjeta_Usuario = () => {
               className="escanear-tarjeta-siguiente-btn"
               onClick={handleSiguiente}
               style={{
-                backgroundColor: '#2F5232' // Verde
+                backgroundColor: '#2F5232'
               }}
             >
               Siguiente

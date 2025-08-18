@@ -15,6 +15,9 @@ const Escanear_Huella_Usuario = () => {
   const [huellaVerificada, setHuellaVerificada] = useState(null);
   const navigate = useNavigate();
 
+  // ✅ ADDED: Get biblioteca_id from localStorage
+  const bibliotecaId = localStorage.getItem('biblioteca');
+
   // Cargar datos del usuario del paso anterior
   useEffect(() => {
     const usuarioTemp = localStorage.getItem('usuario_prestamo_temp');
@@ -33,30 +36,45 @@ const Escanear_Huella_Usuario = () => {
     }
   }, [navigate]);
 
-  // Función para verificar huella dactilar
+  // ✅ ADDED: Missing handleSiguiente function
+  const handleSiguiente = () => {
+    if (scanSuccess && huellaVerificada) {
+      setMostrarModal(true);
+      setTimeout(() => {
+        setMostrarModal(false);
+        // Navigate to the next step - book selection or loan creation
+        navigate('/Buscar_Libros'); // or whatever your next step is
+      }, 1500);
+    }
+  };
+
+  // ✅ CORRECTED: Función para verificar huella dactilar con biblioteca_id
   const handleScanFingerprint = async () => {
     if (!usuarioData || !usuarioData.user_id) {
       setError('No se encontraron datos del usuario');
       return;
     }
 
+    if (!bibliotecaId) {
+      setError('ID de biblioteca no encontrado. Por favor inicia sesión nuevamente.');
+      return;
+    }
+
     try {
       setIsScanning(true);
       setError('');
-      console.log('🔍 Iniciando verificación de huella dactilar...');
+      console.log('🔍 Iniciando verificación de huella dactilar para usuario:', usuarioData.user_id, 'en biblioteca:', bibliotecaId);
 
-      // Llamar al endpoint de verificación de huella
-      // Nota: Tu endpoint requiere huella_escaneada, pero primero necesitas capturarla del dispositivo
-      // Por ahora simularemos que el dispositivo proporciona la huella escaneada
-      
-      // Primero, deberíamos llamar a un endpoint para capturar la huella del dispositivo
-      // Por simplicidad, usaremos un placeholder - en producción esto vendría del ESP32/FastAPI
-      const huellaEscaneada = "huella_temp_placeholder"; // Esto debería venir del dispositivo
+      const huellaEscaneada = "huella_temp_placeholder";
 
       const response = await fetchWithAuth('/api/business/verificar-huella', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
-          user_id: usuarioData.user_id,
+          user_id: parseInt(usuarioData.user_id),
+          biblioteca_id: parseInt(bibliotecaId),
           huella_escaneada: huellaEscaneada
         })
       });
@@ -66,19 +84,34 @@ const Escanear_Huella_Usuario = () => {
       if (response.ok && data.status === 'Huella verificada') {
         console.log('✅ Huella verificada exitosamente:', data);
         
-        // Combinar datos del usuario con la verificación de huella
+        // ✅ IMPROVED: Better data combination with API response
         const datosCompletos = {
           ...usuarioData,
-          ...data.data,
-          verificacion_biometrica_completa: true
+          user_id: data.data.user_id, // Use the confirmed user_id from API
+          usuario_nombre: data.data.usuario_nombre, // Use confirmed name from API
+          usuario_apellido: data.data.usuario_apellido, // Use confirmed surname from API
+          biblioteca_id: data.data.biblioteca_id,
+          verificacion_biometrica_completa: true,
+          verificacion_exitosa: data.data.verificacion_exitosa,
+          verification_details: data.data.verification_details,
+          // Keep original RFID data
+          codigo_tarjeta: usuarioData.codigo_tarjeta,
+          biblioteca_nombre: usuarioData.biblioteca_nombre
         };
         
         // Guardar datos completos para el préstamo
         localStorage.setItem('usuario_prestamo_verificado', JSON.stringify(datosCompletos));
         
-        setHuellaVerificada(data.data);
+        // ✅ IMPROVED: Show verification details
+        setHuellaVerificada({
+          ...data.data,
+          confidence_score: data.data.verification_details?.confidence_score || 100,
+          slot_id: data.data.verification_details?.slot_id
+        });
         setScanSuccess(true);
         setError('');
+
+        console.log('📄 Datos completos guardados para préstamo:', datosCompletos);
 
       } else {
         // Manejar diferentes tipos de errores
@@ -97,6 +130,9 @@ const Escanear_Huella_Usuario = () => {
           case 'HUELLA_04':
             errorMessage = 'Error de comunicación con el dispositivo de huella';
             break;
+          case 'HUELLA_05':
+            errorMessage = 'Datos requeridos faltantes para la verificación';
+            break;
           default:
             errorMessage = data.msg || 'Error desconocido al verificar huella';
         }
@@ -114,16 +150,61 @@ const Escanear_Huella_Usuario = () => {
     }
   };
 
-  // Función para continuar al siguiente paso
-  const handleSiguiente = () => {
-    if (huellaVerificada) {
-      setMostrarModal(true);
-      setTimeout(() => {
-        setMostrarModal(false);
-        navigate('/Confirmar_Prestamo');
-      }, 1000);
-    }
-  };
+  // ✅ ADDED: Early return if no biblioteca_id found
+  if (!bibliotecaId) {
+    return (
+      <div className="buscar-libros-bg">
+        <Sidebar />
+        <div className="buscar-libros-content">
+          <h1 className="nuevo-prestamo-title">Nuevo préstamo</h1>
+          <div className="buscar-divider">
+            <svg xmlns="http://www.w3.org/2000/svg" width="859.012" height="4" viewBox="0 0 860 4" fill="none">
+              <path d="M0 2L859.012 2" stroke="#3A332A" strokeWidth="3" />
+            </svg>
+          </div>
+          
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '400px',
+            flexDirection: 'column',
+            gap: '20px'
+          }}>
+            <div style={{ 
+              color: '#dc2626', 
+              fontSize: '18px', 
+              fontWeight: '500',
+              textAlign: 'center'
+            }}>
+              ⚠️ Datos de sesión incompletos
+            </div>
+            <div style={{ 
+              color: '#6b7280', 
+              fontSize: '14px',
+              textAlign: 'center'
+            }}>
+              No se encontró el ID de biblioteca. Por favor inicia sesión nuevamente.
+            </div>
+            <button 
+              onClick={() => navigate('/Inicio')}
+              style={{
+                backgroundColor: '#3B82F6',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              Ir al inicio
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Mostrar loading si no hay datos del usuario
   if (!usuarioData) {
@@ -211,11 +292,16 @@ const Escanear_Huella_Usuario = () => {
               textAlign: 'center'
             }}>
               <div style={{ fontWeight: '600', color: '#065F46', marginBottom: '5px' }}>
-                ✅ Huella verificada
+                ✅ Huella verificada exitosamente
               </div>
-              <div style={{ fontSize: '13px', color: '#059669' }}>
-                Similitud: {Math.round((huellaVerificada.similarity || 1.0) * 100)}%
+              <div style={{ fontSize: '13px', color: '#059669', marginBottom: '3px' }}>
+                Puntuación: {huellaVerificada.confidence_score || 100}
               </div>
+              {huellaVerificada.slot_id && (
+                <div style={{ fontSize: '11px', color: '#047857' }}>
+                  Slot: {huellaVerificada.slot_id}
+                </div>
+              )}
             </div>
           )}
 

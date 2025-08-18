@@ -6,6 +6,7 @@ const ModalEscanearHuella = ({ onClose }) => {
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [huellaData, setHuellaData] = useState(null);
 
   const handleDetectarHuella = async () => {
     try {
@@ -36,13 +37,22 @@ const ModalEscanearHuella = ({ onClose }) => {
 
       const data = await response.json();
 
-      if (response.ok && data.status === 'Registro exitoso') {
+      if (response.ok && data.status === 'Captura exitosa') {
         console.log('✅ Huella registrada exitosamente:', data);
+        const huellaInfo = {
+          finger_id: data.data.finger_id,
+          template_data: data.data.template_data,
+          usuario_id: data.data.usuario_id,
+          datos_adicional_id: data.data.datos_adicional_id,
+          timestamp: new Date().toISOString()
+        };
+        
+        setHuellaData(huellaInfo);
         setSuccess(true);
         
         // Close modal after a short delay and notify parent of success
         setTimeout(() => {
-          onClose && onClose(true);
+          onClose && onClose(true, huellaInfo);
         }, 1500);
       } else {
         throw new Error(data.msg || 'Error al registrar huella');
@@ -57,7 +67,7 @@ const ModalEscanearHuella = ({ onClose }) => {
   };
 
   const handleCancel = () => {
-    onClose && onClose(false);
+    onClose && onClose(false, null);
   };
 
   return (
@@ -109,7 +119,7 @@ const ModalEscanearHuella = ({ onClose }) => {
             marginTop: '10px',
             fontWeight: '500'
           }}>
-            ¡Huella registrada exitosamente!
+            ¡Huella detectada exitosamente!
           </div>
         )}
 

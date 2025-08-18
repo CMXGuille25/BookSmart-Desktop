@@ -44,6 +44,9 @@ const RegistrarUsuario = () => {
   const [huellaRegistrada, setHuellaRegistrada] = useState(initialBiometricStatus.huella_registrada);
   const [tarjetaRegistrada, setTarjetaRegistrada] = useState(initialBiometricStatus.tarjeta_registrada);
 
+  // ✅ NUEVO: Estados para datos locales de huella
+  const [huellaLocal, setHuellaLocal] = useState(null); // Guardar datos de huella localmente
+  const [huellaDetectadaLocal, setHuellaDetectadaLocal] = useState(false); // Si se detectó huella localmente
   // Estados para loading y errores
   const [loading, setLoading] = useState({
     rostro: false,
@@ -60,7 +63,22 @@ const RegistrarUsuario = () => {
   });
 
   // Habilitar botón solo si los tres están registrados
-  const registroCompleto = rostroRegistrado && huellaRegistrada && tarjetaRegistrada;
+  const registroCompleto = rostroRegistrado && (huellaRegistrada || huellaDetectadaLocal) && tarjetaRegistrada;
+
+  useEffect(() => {
+    const huellaLocalStorage = localStorage.getItem(`huella_temp_${usuarioId}`);
+    if (huellaLocalStorage) {
+      try {
+        const huellaData = JSON.parse(huellaLocalStorage);
+        setHuellaLocal(huellaData);
+        setHuellaDetectadaLocal(true);
+        console.log('🔍 Huella encontrada en localStorage para usuario:', usuarioId);
+      } catch (error) {
+        console.error('❌ Error parsing huella local:', error);
+        localStorage.removeItem(`huella_temp_${usuarioId}`);
+      }
+    }
+  }, [usuarioId]);
 
   // ✅ MODIFICADO: Verificar estado actual solo si es necesario
   const verificarEstadoActual = async () => {
@@ -193,9 +211,24 @@ const RegistrarUsuario = () => {
 
       console.log('🔍 Verificando registro completo para usuario:', usuarioId);
 
+      // ✅ NUEVO: Preparar payload con huella local si existe
+    const requestBody = {
+        biblioteca_id: parseInt(bibliotecaId)
+      };
+
+      // ✅ CORREGIDO: Enviar template_data como huella_template
+      if (huellaDetectadaLocal && huellaLocal) {
+        requestBody.huella_template = huellaLocal.template_data;
+        console.log('📤 Incluyendo template de huella local en la verificación:', huellaLocal.template_data);
+      } else {
+        // Si no hay huella local, el API retornará error apropiado
+        console.warn('⚠️ No hay huella local disponible para enviar');
+      }
+
       // Call the verification endpoint
-      const response = await fetchWithAuth(`/api/business/verificar-registro-completo/${usuarioId}?biblioteca_id=${bibliotecaId}`, {
-        method: 'GET'
+      const response = await fetchWithAuth(`/api/business/verificar-registro-completo/${usuarioId}`, {
+        method: 'POST',
+        body: JSON.stringify(requestBody)
       });
 
       const data = await response.json();
@@ -214,6 +247,14 @@ const RegistrarUsuario = () => {
         setRostroRegistrado(biometricStatus.foto_registrada);
         setHuellaRegistrada(biometricStatus.huella_registrada);
         setTarjetaRegistrada(biometricStatus.tarjeta_registrada);
+
+        // ✅ NUEVO: Limpiar huella local ya que se guardó en BD
+          if (huellaDetectadaLocal) {
+            localStorage.removeItem(`huella_temp_${usuarioId}`);
+            setHuellaLocal(null);
+            setHuellaDetectadaLocal(false);
+            console.log('🗑️ Huella local eliminada después del registro exitoso');
+          }
         
         // Clear temporary user data
         localStorage.removeItem('usuario_registro_temp');
@@ -292,7 +333,7 @@ const RegistrarUsuario = () => {
   };
   
   const handleAbrirModalHuella = () => {
-    if (!huellaRegistrada) {
+    if (!huellaRegistrada && !huellaDetectadaLocal) {
       setModalHuellaOpen(true);
     }
   };
@@ -314,13 +355,23 @@ const RegistrarUsuario = () => {
     }
   };
 
-  const handleCerrarModalHuella = (registrado) => {
+  const handleCerrarModalHuella = (registrado, huellaData) => {
     setModalHuellaOpen(false);
-    if (registrado) {
-      // ✅ SIMPLIFICADO - Solo actualizar el estado
-      console.log('✅ Huella registrada exitosamente desde el modal');
-      setHuellaRegistrada(true);
-      setErrors(prev => ({ ...prev, huella: '' }));
+    if (registrado && huellaData) {
+      // ✅ NUEVO: Guardar huella localmente en lugar de en BD
+      try {
+        localStorage.setItem(`huella_temp_${usuarioId}`, JSON.stringify(huellaData));
+        setHuellaLocal(huellaData);
+        setHuellaDetectadaLocal(true);
+        setErrors(prev => ({ ...prev, huella: '' }));
+        
+        console.log('✅ Huella detectada y guardada localmente para usuario:', usuarioId);
+        console.log('📦 Datos de huella guardados en localStorage con key:', `huella_temp_${usuarioId}`);
+      } catch (error) {
+        console.error('❌ Error guardando huella localmente:', error);
+        setErrors(prev => ({ ...prev, huella: 'Error guardando huella localmente' }));
+        alert('Error al guardar la huella localmente');
+      }
     }
   };
 
@@ -535,16 +586,20 @@ const RegistrarUsuario = () => {
               <button
                 className="usuario-registrar-btn"
                 style={{ 
-                  backgroundColor: huellaRegistrada ? '#3CB371' : '#2F5232',
+                  // ✅ MODIFICADO: Verde si está registrada en BD O detectada localmente
+                  backgroundColor: (huellaRegistrada || huellaDetectadaLocal) ? '#3CB371' : '#2F5232',
                   color: 'white',
                   opacity: loading.huella ? 0.7 : 1,
-                  cursor: huellaRegistrada ? 'not-allowed' : 'pointer'
+                  cursor: (huellaRegistrada || huellaDetectadaLocal) ? 'not-allowed' : 'pointer'
                 }}
                 onClick={handleAbrirModalHuella}
-                disabled={huellaRegistrada || loading.huella}
+                disabled={huellaRegistrada || huellaDetectadaLocal || loading.huella}
               >
-                {loading.huella ? 'Registrando...' : (huellaRegistrada ? 'Registrado' : 'Registrar')}
+                {loading.huella ? 'Detectando...' : 
+                 (huellaRegistrada ? 'Registrado' : 
+                  (huellaDetectadaLocal ? 'Registrado' : 'Registrar'))}
               </button>
+            
               {errors.huella && <div style={{color: 'red', fontSize: '12px', marginTop: '5px'}}>{errors.huella}</div>}
             </div>
 
